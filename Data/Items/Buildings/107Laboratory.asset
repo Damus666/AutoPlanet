@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ce50037823ee4c42bc15204f4ededc6, type: 3}
+  m_Name: 107Laboratory
+  m_EditorClassIdentifier: 
+  itemName: Laboratory
+  ID: 107
+  description: Converts items to experience to use in research
+  texture: {fileID: 21300000, guid: f0e39ba32fc75ec488493d5e221c5e8d, type: 3}
+  stackSize: 50
+  isBuilding: 1
+  buildingData:
+    targetInterface: 14
+    destroyVegetation: 1
+    buildingScale: 2
+    doGetData: 1
+    needElectricity: 1
+    canInteract: 1
+  carftType: 2
+  craftTime: 10
+  smeltedVersion: {fileID: 0}
+  requirements:
+  - item: {fileID: 11400000, guid: a2590e4586e76914ab4a7cf8505a14a7, type: 2}
+    amount: 10
+  - item: {fileID: 11400000, guid: 44df483b84a170346981e987b9af7bd5, type: 2}
+    amount: 10
+  - item: {fileID: 11400000, guid: 8b94ca146f7c4da4384bf4aa7a7c2508, type: 2}
+    amount: 5
+  craftAmount: 1
+  specialID: -1
+  specialLevel: 0
+  startsUnlocked: 1
+  experience: 400
+  processTime: 3
+  halfScaleDrop: 0
+  maxHealth: 300

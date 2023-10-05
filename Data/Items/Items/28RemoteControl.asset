@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ce50037823ee4c42bc15204f4ededc6, type: 3}
+  m_Name: 28RemoteControl
+  m_EditorClassIdentifier: 
+  itemName: Remote Control
+  ID: 28
+  description: Used by automated bots
+  texture: {fileID: 21300000, guid: 1996f95807dbbcf4a9b105445117e923, type: 3}
+  stackSize: 100
+  isBuilding: 0
+  buildingData:
+    targetInterface: 0
+    destroyVegetation: 1
+    buildingScale: 1
+    doGetData: 1
+    needElectricity: 1
+    canInteract: 1
+  carftType: 2
+  craftTime: 4
+  smeltedVersion: {fileID: 0}
+  requirements:
+  - item: {fileID: 11400000, guid: 876467176a32fda4fb458860d2335cb8, type: 2}
+    amount: 2
+  - item: {fileID: 11400000, guid: a2590e4586e76914ab4a7cf8505a14a7, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: 7d13778b78a24884fabba8e915439f17, type: 2}
+    amount: 1
+  craftAmount: 1
+  specialID: -1
+  specialLevel: 0
+  startsUnlocked: 1
+  experience: 100
+  processTime: 0.75

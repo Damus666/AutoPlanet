@@ -1,0 +1,142 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1128982092664619425
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1431689132154321558}
+  - component: {fileID: 1241449979071324938}
+  m_Layer: 0
+  m_Name: Chunk
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1431689132154321558
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1128982092664619425}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1241449979071324938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1128982092664619425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 283e5d869764d61468e142d54d7193da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  planetData: {fileID: 11400000, guid: ab858c216c8791e4d964a1aeb20276f2, type: 2}
+  tilePrefab: {fileID: 4452689355991254730, guid: ce2d3cd729a9d774785eeb7b689ccaee, type: 3}
+  chunkRadius: 10
+  deadTileColor: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 1}
+  mushroomPrefab: {fileID: 8982308026382417081, guid: a023a3cfae788894eaa3ce5f3361d6fe, type: 3}
+  mushroomChance: 10
+  mushroomObjetcs:
+  - {fileID: 11400000, guid: fd0d5277c9504ff408cedf3548f8ea52, type: 2}
+  - {fileID: 11400000, guid: cd0d1b0e87a9696428e55f09a4ce960a, type: 2}
+  - {fileID: 11400000, guid: 63851ee50e951114b9e3c485028a0e50, type: 2}
+  decorationPrefab: {fileID: 2870019838296325064, guid: 0db8f849d47d42043aac138b18e8a9cf, type: 3}
+  decorationChance: 50
+  decorationObjects:
+  - {fileID: 11400000, guid: 22fd84370784c0c43a4b9b3d948db2a7, type: 2}
+  - {fileID: 11400000, guid: 68745747914f9dd48ac5692c8054392d, type: 2}
+  - {fileID: 11400000, guid: 8a77cdd26ca22e54a87b68c9f04f388c, type: 2}
+  - {fileID: 11400000, guid: b42196184528e224ab65328136852678, type: 2}
+  oxygenPlanetPrefab: {fileID: 4556527484620975369, guid: e893644af14fff14d9d147f64dc49747, type: 3}
+  oxygenPlantData: {fileID: 11400000, guid: f19d400c6350ce74b93b857731458591, type: 2}
+  oxygenPlantChance: 2
+  caveDecorationPrefab: {fileID: 4590091039898743556, guid: 0c4a0148833e16049a95ae92105e2e4c, type: 3}
+  caveDecorationChance: 0.1
+  caveDecorationObjects:
+  - {fileID: 11400000, guid: 1d61efa2ae71cef4eb5ac78dab7157f6, type: 2}
+  - {fileID: 11400000, guid: becf208a676b03e4e9fba42569a70c0d, type: 2}
+  enemySpawnerObj: {fileID: 11400000, guid: 4e28a4b97bbbb9647aa4ba5d56da18a6, type: 2}
+  enemySpawnerPrefab: {fileID: 5232795750248656095, guid: 5cc3b161c6f4da44593dbf5d0bb2eb81, type: 3}
+  enemySpawnerChance: 0.5
+  starPrefab: {fileID: 9012973557429230243, guid: 75bdcebec61fa5845a346cefa221364d, type: 3}
+  starChance: 50
+  starSizeRange: {x: 0.01, y: 0.03}
+  starColorGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 0.96107996, b: 0.7137255, a: 1}
+    key1: {r: 0.740566, g: 0.8742584, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 64571
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  dustPrefab: {fileID: 1165069468880201931, guid: 0ba3285243d193f488ec9a54d75c8dcf, type: 3}
+  dustAmount: 3
+  dustSizeRange: {x: 4, y: 8}
+  dustAlpha: 0.15
+  dustGradient:
+    serializedVersion: 2
+    key0: {r: 0.8867924, g: 0.583398, b: 0, a: 1}
+    key1: {r: 0.65444326, g: 0, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  bigStarPrefab: {fileID: 3232787534140975660, guid: 777d550fd5360ab489e94b743244ffef, type: 3}
+  bigStarChance: 1
+  canDisable: 0

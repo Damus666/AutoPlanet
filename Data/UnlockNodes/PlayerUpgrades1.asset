@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bbffd3c4a1e484587f12b805c90092, type: 3}
+  m_Name: PlayerUpgrades1
+  m_EditorClassIdentifier: 
+  nodeName: Player Upgrades
+  itemsOutput:
+  - {fileID: 11400000, guid: 2ee88ddb6a1ad1049a2c190042cb5060, type: 2}
+  - {fileID: 11400000, guid: 2a3d4851a7ee12048b7d833f7e412cc6, type: 2}
+  - {fileID: 11400000, guid: 7b3036304d2f6054cbec9c8d8b7a2f07, type: 2}
+  isRoot: 1
+  nodeRequirements: []
+  nodeChildren:
+  - {fileID: 11400000, guid: 1cfccac49ba696749a3618d27206b0ad, type: 2}
+  - {fileID: 11400000, guid: e759cf6fe419632419877f61b44f49bb, type: 2}
+  unlockTime: 100

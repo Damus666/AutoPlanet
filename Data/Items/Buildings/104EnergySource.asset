@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ce50037823ee4c42bc15204f4ededc6, type: 3}
+  m_Name: 104EnergySource
+  m_EditorClassIdentifier: 
+  itemName: Energy Source
+  ID: 104
+  description: Produces energy if placed on top of an oxygen plant
+  texture: {fileID: 21300000, guid: 3895fbf594af8ce4d91719eac844a089, type: 3}
+  stackSize: 50
+  isBuilding: 1
+  buildingData:
+    targetInterface: 8
+    destroyVegetation: 0
+    buildingScale: 2
+    doGetData: 1
+    needElectricity: 1
+    canInteract: 0
+  carftType: 2
+  craftTime: 8
+  smeltedVersion: {fileID: 0}
+  requirements:
+  - item: {fileID: 11400000, guid: 5ed7699ad0315264a88878ef58c47f00, type: 2}
+    amount: 10
+  - item: {fileID: 11400000, guid: cadb491897d278144ac9eeda594f2322, type: 2}
+    amount: 30
+  craftAmount: 1
+  specialID: -1
+  specialLevel: 0
+  startsUnlocked: 1
+  experience: 35
+  processTime: 0.2
+  halfScaleDrop: 0
+  maxHealth: 300

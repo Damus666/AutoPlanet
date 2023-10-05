@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bbffd3c4a1e484587f12b805c90092, type: 3}
+  m_Name: Defence
+  m_EditorClassIdentifier: 
+  nodeName: Defence
+  itemsOutput:
+  - {fileID: 11400000, guid: 172b069c9bff50045a173041423c4a06, type: 2}
+  - {fileID: 11400000, guid: 995a363e80aa1604fa40be2a3cc4324a, type: 2}
+  isRoot: 0
+  nodeRequirements:
+  - {fileID: 11400000, guid: 934a75a635db0ff4faac0e21d2dab961, type: 2}
+  nodeChildren: []
+  unlockTime: 320

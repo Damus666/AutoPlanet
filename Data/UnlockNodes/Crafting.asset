@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bbffd3c4a1e484587f12b805c90092, type: 3}
+  m_Name: Crafting
+  m_EditorClassIdentifier: 
+  nodeName: Crafting
+  itemsOutput:
+  - {fileID: 11400000, guid: 7b26e098bdbed1546ab96f7c4b58c58d, type: 2}
+  - {fileID: 11400000, guid: 8f34d0a8f8a48934088fb723b616dc06, type: 2}
+  isRoot: 0
+  nodeRequirements:
+  - {fileID: 11400000, guid: 3a73e3d2211913b4da6d833d8270a82f, type: 2}
+  nodeChildren:
+  - {fileID: 11400000, guid: 275271dc6f664474a92fcac6f0e7b4c0, type: 2}
+  unlockTime: 120

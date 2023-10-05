@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ce50037823ee4c42bc15204f4ededc6, type: 3}
+  m_Name: 109LaserGun
+  m_EditorClassIdentifier: 
+  itemName: Laser Turret
+  ID: 109
+  description: Shoots nearby enemies
+  texture: {fileID: 21300000, guid: b3db756e73c76514ea49dbc8f773a45b, type: 3}
+  stackSize: 50
+  isBuilding: 1
+  buildingData:
+    targetInterface: 5
+    destroyVegetation: 1
+    buildingScale: 1
+    doGetData: 1
+    needElectricity: 1
+    canInteract: 1
+  carftType: 1
+  craftTime: 12
+  smeltedVersion: {fileID: 0}
+  requirements:
+  - item: {fileID: 11400000, guid: 6d3bdaaf65e15fc49b0dd25bef8fbe09, type: 2}
+    amount: 20
+  - item: {fileID: 11400000, guid: 9ae72b845676ed04a9571f364564c90d, type: 2}
+    amount: 30
+  - item: {fileID: 11400000, guid: 3a10ccf4eded86047b967e021edfea45, type: 2}
+    amount: 1
+  craftAmount: 1
+  specialID: -1
+  specialLevel: 0
+  startsUnlocked: 0
+  experience: 800
+  processTime: 2
+  halfScaleDrop: 1
+  maxHealth: 1500

@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ce50037823ee4c42bc15204f4ededc6, type: 3}
+  m_Name: 17UpgradeJetpack1
+  m_EditorClassIdentifier: 
+  itemName: Fuel Tank  Lv.1
+  ID: 17
+  description: If put on the body slot, increase jetpack fuel capacity.
+  texture: {fileID: 21300000, guid: a9787b5004cf1e3458a172d0d2156fc8, type: 3}
+  stackSize: 1
+  isBuilding: 0
+  buildingData:
+    targetInterface: 0
+    destroyVegetation: 1
+    buildingScale: 1
+    doGetData: 1
+    needElectricity: 1
+    canInteract: 1
+  carftType: 2
+  craftTime: 8
+  smeltedVersion: {fileID: 0}
+  requirements:
+  - item: {fileID: 11400000, guid: ab25dfa988b0d114ea1895707da33c12, type: 2}
+    amount: 3
+  - item: {fileID: 11400000, guid: 22f2de10f597e384dbc897ba4e563306, type: 2}
+    amount: 10
+  craftAmount: 1
+  specialID: 2
+  specialLevel: 0
+  startsUnlocked: 0
+  experience: 100
+  processTime: 1

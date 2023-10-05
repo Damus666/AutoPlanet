@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b180409d6ffe144a0443290d398c88, type: 3}
+  m_Name: TestPlanet
+  m_EditorClassIdentifier: 
+  bottomSprite: {fileID: 11400000, guid: 669c15e7721ee7e45b0c614258a5f9f2, type: 2}
+  middleSprite: {fileID: 11400000, guid: 8d954b0ad57942d4fb8a390c39f7c20e, type: 2}
+  topSprite: {fileID: 11400000, guid: 7bb47931c52cf5943b1eff84d9fb853a, type: 2}
+  middleLayerHeight: 5
+  isBlockValue: 0.35
+  heightMultiplier: 25
+  caveOffset: 15
+  surfaceNoise:
+    startFrequency: 0.04
+    frequencyMultiplier: 1.2
+    persistence: 0.2
+    octaves: 5
+  caveNoise:
+    startFrequency: 0.04
+    frequencyMultiplier: 1.2
+    persistence: 0.5
+    octaves: 5
+  oresSettings:
+  - {fileID: 11400000, guid: 3215871e341830441b20847ab3fa3004, type: 2}
+  - {fileID: 11400000, guid: 380bb3540a4e549468c36932a475fff8, type: 2}
+  - {fileID: 11400000, guid: 7ca9567fdf16e1943ab1b9a8495e8d1b, type: 2}
+  - {fileID: 11400000, guid: 620afe3feb2b58947937b30aafa9dea6, type: 2}
+  isOreValue: 0.6
