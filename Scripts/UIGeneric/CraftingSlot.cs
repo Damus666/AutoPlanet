@@ -11,15 +11,17 @@ public class CraftingSlot : MonoBehaviour
     [SerializeField] Color canCraftColorHovered = Color.green;
     [SerializeField] Color cannorCraftColorHovered = Color.red;
     [SerializeField] Image outline;
+
     InfoBoxManager infoBoxManager;
     Inventory inventory;
     CraftingQueue queue;
     UnlockManager unlockManager;
+
     bool isHovering;
     bool canCraft;
     string craftError = "Can craft";
-    public Item item;
     bool isUnlocked = true;
+    public Item item;
 
     public void Setup(Item item, Inventory inv, CraftingQueue queue)
     {

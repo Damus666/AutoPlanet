@@ -16,6 +16,7 @@ public class SubCategoryHolder
 
 public class CraftingInterface : Interface
 {
+    [Header("------------------------------------------------------")]
     [SerializeField] List<GameObject> categories;
     [SerializeField] List<CategoryHolder> items;
     [SerializeField] GameObject subCategoryPrefab;

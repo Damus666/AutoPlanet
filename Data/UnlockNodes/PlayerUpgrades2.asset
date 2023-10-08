@@ -20,5 +20,6 @@ MonoBehaviour:
   isRoot: 0
   nodeRequirements:
   - {fileID: 11400000, guid: f1b9b6cc944bebc4cb475518483f591d, type: 2}
-  nodeChildren: []
+  nodeChildren:
+  - {fileID: 11400000, guid: e8d0b51da2cd29e4ab82b5c2c1d0f4e1, type: 2}
   unlockTime: 600

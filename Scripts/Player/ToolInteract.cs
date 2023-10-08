@@ -14,6 +14,7 @@ public class ToolInteract : MonoBehaviour
     [SerializeField] float mineTime = 0.5f;
     [SerializeField] float animSpeedMul = 10;
     [SerializeField] float playerDamage = 15;
+    [SerializeField] float swordDamage = 22;
     [SerializeField] public float mineDistance = 15;
     [SerializeField] LayerMask playerLayer;
     [SerializeField] LayerMask dropLayer;
@@ -22,6 +23,9 @@ public class ToolInteract : MonoBehaviour
     [SerializeField] GameObject projectilePrefab;
     [SerializeField] Sprite projectileSprite;
     [SerializeField] Transform shootPos;
+    [SerializeField] Collider2D swordCollider;
+    [SerializeField] GameObject rayObj;
+    [SerializeField] UnityEngine.Rendering.Universal.Light2D rayLight;
     
     [SerializeField] LaserAmmoManager ammoManager;
     [SerializeField] AudioSource shootSound;
@@ -41,9 +45,13 @@ public class ToolInteract : MonoBehaviour
     [SerializeField] int decorationToolIdx = 1;
     [SerializeField] int tileToolIdx = 0;
     [SerializeField] int shootToolIdx = 2;
+    [SerializeField] int repairToolIdx = 3;
+    [SerializeField] int swordToolIdx = 4;
+    [SerializeField] int rayToolIdx = 5;
     [SerializeField] int mineButton = 0;
     [SerializeField] int repairButton = 1;
     [SerializeField] int shootButton = 0;
+    [SerializeField] int attackButton = 0;
     [SerializeField] int buildingMineButton = 1;
 
     private void Start()
@@ -58,6 +66,17 @@ public class ToolInteract : MonoBehaviour
         {
             Shoot();
         }
+        // ATTACK
+        if (tools.toolIndex == swordToolIdx && Input.GetMouseButtonDown(attackButton) && !inventory.isMouseHovering && !inventory.floatingSlot.isFloating)
+        {
+            Attack();
+        }
+        // RAY
+        if (tools.toolIndex == rayToolIdx && Input.GetMouseButton(shootButton) && !inventory.isMouseHovering && !inventory.floatingSlot.isFloating
+            && !ammoManager.isEmpty)
+            UpdateRay();
+        else
+            DisableRay();
         // MINING
         if ((Input.GetMouseButton(mineButton) || Input.GetMouseButton(buildingMineButton)) && !inventory.isMouseHovering)
         {
@@ -105,6 +124,19 @@ public class ToolInteract : MonoBehaviour
         }
     }
 
+    void DisableRay()
+    {
+        rayLight.enabled = false;
+        if (rayObj.activeSelf) rayObj.SetActive(false);
+    }
+
+    void UpdateRay()
+    {
+        rayLight.enabled = true;
+        if (!rayObj.activeSelf) rayObj.SetActive(true);
+        // remove ammo
+    }
+
     void Shoot()
     {
         shootSound.Play();
@@ -114,6 +146,19 @@ public class ToolInteract : MonoBehaviour
         Vector3 dir = (mousePos - myPos).normalized;
         p.GetComponent<Projectile>().Setup(dir, projectileSprite, playerDamage, true);
         ammoManager.ConsumeLaser();
+    }
+
+    void Attack()
+    {
+        RaycastHit2D[] hits = new RaycastHit2D[30];
+        swordCollider.Cast(new Vector2(), hits);
+        foreach (RaycastHit2D hit in hits)
+        {
+            if (hit.collider == null) continue;
+            if (hit.collider.gameObject.layer != 11) continue;
+            if (hit.collider.gameObject.TryGetComponent(out Enemy enemy))
+                enemy.Damage(swordDamage);
+        }
     }
 
     void StartMining(bool isBuilding)
@@ -220,6 +265,7 @@ public class ToolInteract : MonoBehaviour
 
     void Repair()
     {
+        if (tools.toolIndex != repairToolIdx) return;
         RaycastHit2D hit = ObjectRaycast();
         if (hit.collider == null) return;
         if (Vector3.Distance(transform.position, hit.collider.transform.position) > mineDistance) return;

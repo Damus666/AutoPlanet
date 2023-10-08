@@ -9,12 +9,15 @@ public class InfoBox : MonoBehaviour
     [SerializeField] TextMeshProUGUI nameTxt;
     [SerializeField] TextMeshProUGUI descriptionTxt;
     [SerializeField] Image image;
+
     [SerializeField] TextMeshProUGUI dropNameTxt;
     [SerializeField] Image dropImage;
+
     [SerializeField] TextMeshProUGUI crafingMessage;
     [SerializeField] TextMeshProUGUI crafingInfo;
     [SerializeField] List<Image> craftingImages;
     [SerializeField] List<TextMeshProUGUI> craftingAmounts;
+
     [SerializeField] Inventory inventory;
     [SerializeField] TextMeshProUGUI oreTxt;
     [SerializeField] TextMeshProUGUI buildingTxt;

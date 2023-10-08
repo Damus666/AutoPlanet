@@ -6,28 +6,44 @@ public class Tools : MonoBehaviour
 {
     [SerializeField] StateManager stateManager;
     [SerializeField] Inventory inventory;
+
     [SerializeField] float minDistance = 1f;
+    [SerializeField] float minXDistance;
     [SerializeField] float rightCorrectionAngle = 45;
     [SerializeField] float leftCorrectionAngle = 135;
+
     [SerializeField] AudioSource clickSound;
     [SerializeField] CharacterController2D cc;
+
     [SerializeField] Transform mainPivot;
     [SerializeField] Transform center;
+    [SerializeField] GameObject toolSelection;
+
     [SerializeField] List<Transform> tools = new();
     [SerializeField] List<Transform> pivots = new();
+
     [SerializeField] List<float> rightCorrectionAngles = new();
     [SerializeField] List<float> leftCorrectionAngles = new();
 
-    [SerializeField] GameObject toolSelection;
+    [SerializeField] Item laserSwordItem;
+    [SerializeField] Item laserRayItem;
+
     public Transform currentTool = null;
     public Transform currentPivot = null;
     public int toolIndex = 0;
     public bool isSelecting = false;
+
     Camera mainCamera;
     Vector3 normalScaleGun = new(1.5f, 1.5f, 1);
     Vector3 invertedScaleGun = new(1.5f, -1.5f, 1);
     Vector3 normalScaleS = new(2f, 2f, 1);
     Vector3 invertedScaleS = new(2f, -2f, 1);
+
+    bool cannotEquipWeapon { get { 
+            return 
+                (toolIndex == 4 && inventory.CountItem(laserSwordItem) <= 0) || 
+                (toolIndex == 5 && inventory.CountItem(laserRayItem) <= 0); 
+        } }
 
     void Start()
     {
@@ -79,6 +95,16 @@ public class Tools : MonoBehaviour
         } else if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             SelectTool(3);
+        } else if (Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            SelectTool(4);
+        } else if (Input.GetKeyDown(KeyCode.Alpha7))
+        {
+            SelectTool(5);
+        }
+        if (cannotEquipWeapon)
+        {
+            SelectTool(-1);
         }
         if (currentTool != null)
         {
@@ -86,13 +112,15 @@ public class Tools : MonoBehaviour
             Vector3 toolPos = mainCamera.WorldToScreenPoint(currentTool.position);
             toolPos.z = 0;
             float angleAddition = 0;
-            if (Vector3.Distance(mousePos, toolPos) > minDistance)
+            Vector3 mouseInWorld = mainCamera.ScreenToWorldPoint(mousePos);
+            if (Vector3.Distance(mouseInWorld, currentTool.position) > minDistance && 
+                Mathf.Abs(mouseInWorld.x-currentTool.position.x) > minXDistance)
             {
                 Vector3 dir = mousePos - toolPos;
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
                 if (cc.m_FacingRight)
                 {
-                    if (toolIndex == 2 || toolIndex == 1)
+                    if (toolIndex == 2 || toolIndex == 1 || toolIndex == 5)
                     {
                         if (Mathf.Sign(mousePos.x - toolPos.x) == 1)
                         {
@@ -120,7 +148,7 @@ public class Tools : MonoBehaviour
                 }
                 else
                 {
-                    if (toolIndex == 2 || toolIndex == 1)
+                    if (toolIndex == 2 || toolIndex == 1 || toolIndex == 5)
                     {
                         if (Mathf.Sign(mousePos.x - toolPos.x) == 1)
                         {
@@ -157,7 +185,7 @@ public class Tools : MonoBehaviour
 
     public void SelectTool(int index)
     {
-        if (index == -1)
+        if (index == -1 || cannotEquipWeapon)
         {
             foreach (Transform t in tools)
             {

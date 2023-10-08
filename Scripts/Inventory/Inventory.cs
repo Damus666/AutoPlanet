@@ -6,28 +6,33 @@ using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour
 {
-    List<Slot> slots = new ();
+    
     [SerializeField] GameObject inventoryInterface;
     [SerializeField] GameObject otherInterfaces;
     [SerializeField] GameObject unlockInterface;
-    [SerializeField] StateManager stateManager;
-    [SerializeField] Interface craftingInterface;
-    [SerializeField] Interface unlockI;
-    [SerializeField] CreateSlots slotCreator;
     [SerializeField] GameObject dropPrefab;
-    [SerializeField] AudioSource clickSound;
-    [SerializeField] Camera mainCamera;
-    [SerializeField] List<Item> testItems;
+
+    [SerializeField] StateManager stateManager;
+    [SerializeField] CreateSlots slotCreator;
     [SerializeField] Tools tools;
-    [SerializeField] Slot bodySlot;
-    [SerializeField] Slot petSlot;
     [SerializeField] Player player;
     [SerializeField] PetManager petManager;
     [SerializeField] UFNS ufns;
+
+    [SerializeField] Interface craftingInterface;
+    [SerializeField] Interface unlockI;
+    [SerializeField] Slot bodySlot;
+    [SerializeField] Slot petSlot;
+
+    [SerializeField] AudioSource clickSound;
+    [SerializeField] Camera mainCamera;
+    [SerializeField] List<Item> testItems;
     
     UnlockManager unlockManager;
     RectTransform rectT;
     RectTransform rectTUnlock;
+    List<Slot> slots = new();
+
     public FloatingSlot floatingSlot;
     public bool isMouseHovering;
 

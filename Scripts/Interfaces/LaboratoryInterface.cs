@@ -6,10 +6,13 @@ using TMPro;
 
 public class LaboratoryInterface : Interface
 {
-    public Slot inputSlot;
-    public Laboratory currentLab;
-    public Slider progressSlider;
+    [Header("------------------------------------------------------")]
     [SerializeField] TMP_InputField inputField;
+
+    public Slot inputSlot;
+    public Slider progressSlider;
+    public Laboratory currentLab;
+    
 
     public void OnOpen(Laboratory lab)
     {

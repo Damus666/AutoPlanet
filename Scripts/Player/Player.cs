@@ -15,25 +15,29 @@ enum Status
 public class Player : MonoBehaviour
 {
     [SerializeField] Transform mainCamera;
-    Camera actualCam;
     [SerializeField] CinemachineVirtualCamera cineCamera;
+    [SerializeField] GameObject deathOverlay;
+
     [SerializeField] ParticleSystem jetpackParticles;
     [SerializeField] ParticleSystem smokeParticles;
     [SerializeField] ParticleSystem bloodParticles;
+
     [SerializeField] Slider jetpackSlider;
     [SerializeField] Slider healthSlider;
-    //[SerializeField] Slider oxygenSlider;
+    [SerializeField] TextMeshProUGUI posTxt;
     [SerializeField] CanvasGroup damageOverlay;
-    [SerializeField] public Tools tools;
-    [SerializeField] GameObject deathOverlay;
+    
     [SerializeField] AudioSource bgMusic;
     [SerializeField] AudioSource gameOverSound;
     [SerializeField] AudioSource jetpackSound;
-    [SerializeField] TextMeshProUGUI posTxt;
-    [SerializeField] public AudioSource hitSound;
+
     [SerializeField] Constants constants;
+    [SerializeField] public Tools tools;
+    [SerializeField] public AudioSource hitSound;
+
     CharacterController2D cc;
     Rigidbody2D rb;
+    Camera actualCam;
 
     [SerializeField] float zoomSpeed;
     [SerializeField] float zoomMax=20;
@@ -67,6 +71,7 @@ public class Player : MonoBehaviour
     [SerializeField] List<Sprite> runSprites = new();
     [SerializeField] List<Sprite> idleSprites = new();
     [SerializeField] List<Sprite> jumpSprites = new();
+
     int frameIndex = 0;
     float lastTime = 0;
     SpriteRenderer rrenderer;
@@ -75,9 +80,11 @@ public class Player : MonoBehaviour
     float currentFrameSpeed;
     List<Sprite> currentSprites;
 
+    [Header("---")]
     public bool hasVeichle = false;
     public Breaker veichle;
     public ToolInteract toolInteract;
+    public bool hasEnergy { get { return jumpEnergy > 0.05; } }
 
     public bool CanGoOffVeichle()
     {
@@ -87,6 +94,14 @@ public class Player : MonoBehaviour
     void SetFreezingPosition()
     {
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+    }
+
+    public void ConsumeEnergy(float amount)
+    {
+        jumpEnergy -= amount;
+        if (jumpEnergy <= 0) jumpEnergy = 0;
+        jetpackSlider.value = jumpEnergy;
+
     }
 
     public void SpecialStatsChange(Slot bodySlot)

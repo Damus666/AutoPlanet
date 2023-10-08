@@ -5,12 +5,14 @@ using UnityEngine;
 public class BuildingManager : MonoBehaviour
 {
     [SerializeField] FloatingSlot floatingSlot;
-    GameObject currentBuilding;
+    [SerializeField] UnlockInterface unlockInterface;
+    [SerializeField] Constants constants;
+
     [SerializeField] GameObject buildingPrefab;
     [SerializeField] Camera mainCamera;
-    [SerializeField] Constants constants;
-    [SerializeField] UnlockInterface unlockInterface;
+    
     public float interactDistance = 15;
+    GameObject currentBuilding;
     float lastPlace;
 
     public void OnSlotChange()

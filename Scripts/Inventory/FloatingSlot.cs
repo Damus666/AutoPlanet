@@ -10,6 +10,7 @@ public class FloatingSlot : MonoBehaviour
     [SerializeField] TextMeshProUGUI amountTxt;
     [SerializeField] Inventory inventory;
     [SerializeField] BuildingManager buildingManager;
+
     public Item item;
     public int amount;
     public Slot originalSlot;
@@ -66,6 +67,11 @@ public class FloatingSlot : MonoBehaviour
     {
         gameObject.SetActive(false);
         isFloating = false;
+        buildingManager.OnSlotChange();
+    }
+
+    public void RefreshBuildingManager()
+    {
         buildingManager.OnSlotChange();
     }
 }

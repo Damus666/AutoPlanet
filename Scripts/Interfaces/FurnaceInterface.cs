@@ -6,13 +6,15 @@ using TMPro;
 
 public class FurnaceInterface : Interface
 {
-    public Slot inputSlot;
-    public Slot outputSlot;
-    public Furnace currentFurnace;
-    public Slider progressSlider;
+    [Header("------------------------------------------------------")]
     [SerializeField] TMP_InputField inputField;
     [SerializeField] TMP_InputField outputField;
 
+    public Slot inputSlot;
+    public Slot outputSlot;
+    public Slider progressSlider;
+    public Furnace currentFurnace;
+    
     public void OnOpen(Furnace furnace)
     {
         currentFurnace = furnace;

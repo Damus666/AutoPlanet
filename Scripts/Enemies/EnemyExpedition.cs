@@ -7,10 +7,12 @@ public class EnemyExpedition : MonoBehaviour
     [SerializeField] float expeditionCooldown;
     [SerializeField] float distanceForExpedition;
     [SerializeField] float maxExpeditionTime;
-    float lastExpedition;
+
     Constants constants;
     EnemySpawner spawner;
     Transform pT;
+
+    float lastExpedition;
     bool isExpedition;
 
     public void SetSpawner(EnemySpawner s,Transform p)

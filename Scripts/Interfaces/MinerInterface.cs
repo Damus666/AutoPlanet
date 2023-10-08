@@ -5,9 +5,11 @@ using TMPro;
 
 public class MinerInterface : Interface
 {
+    [Header("------------------------------------------------------")]
+    [SerializeField] TMP_InputField outputField;
+
     public Slot storageSlot;
     public Miner currentMiner;
-    [SerializeField] TMP_InputField outputField;
 
     public void OnOpen(Miner miner)
     {

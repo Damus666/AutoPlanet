@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68bbffd3c4a1e484587f12b805c90092, type: 3}
-  m_Name: Defence
+  m_Name: Weapons
   m_EditorClassIdentifier: 
-  nodeName: Defence
+  nodeName: Weapons
   itemsOutput:
-  - {fileID: 11400000, guid: 172b069c9bff50045a173041423c4a06, type: 2}
-  - {fileID: 11400000, guid: 995a363e80aa1604fa40be2a3cc4324a, type: 2}
+  - {fileID: 11400000, guid: eaf4a5dcabb7ef44989eb84cfd8aa376, type: 2}
+  - {fileID: 11400000, guid: 056f6e6b593d1e9488d32dfa843a3c21, type: 2}
   isRoot: 0
   nodeRequirements:
-  - {fileID: 11400000, guid: 934a75a635db0ff4faac0e21d2dab961, type: 2}
-  nodeChildren:
-  - {fileID: 11400000, guid: e8d0b51da2cd29e4ab82b5c2c1d0f4e1, type: 2}
-  unlockTime: 320
+  - {fileID: 11400000, guid: 275271dc6f664474a92fcac6f0e7b4c0, type: 2}
+  - {fileID: 11400000, guid: e759cf6fe419632419877f61b44f49bb, type: 2}
+  nodeChildren: []
+  unlockTime: 800

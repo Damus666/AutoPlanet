@@ -8,6 +8,7 @@ public class UFNS : MonoBehaviour
     [SerializeField] GameObject genericUFNSPrefab;
     [SerializeField] Transform toprightNotifsHolder;
     [SerializeField] Transform invNotifsHolder;
+
     List<InventoryUFNS> inventoryNotifs = new();
 
     public void RemoveInvUFNS(InventoryUFNS ufns)

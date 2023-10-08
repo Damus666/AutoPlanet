@@ -9,6 +9,7 @@ public class BaseUFNS : MonoBehaviour
     [SerializeField] bool waitBeforeDisappearing;
     [SerializeField] float disappearSpeed;
     [SerializeField] protected float waitTime;
+
     protected UFNS ufns;
     protected bool canDisappear=false;
 

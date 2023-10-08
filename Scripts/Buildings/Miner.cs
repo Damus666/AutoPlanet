@@ -9,6 +9,7 @@ public class Miner : Building
     MinerInterface mInt;
     Transform raycastPoint;
     Ore currentOre;
+
     public Item storageItem;
     public int storageAmount=0;
 

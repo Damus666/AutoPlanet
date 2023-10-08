@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Tioplasm
   ID: 12
-  description: Rare ore found underground
+  description: Rare ore found underground used to repair buildings
   texture: {fileID: 21300000, guid: f567af50e758659499153f1a8d7cee18, type: 3}
   stackSize: 100
   isBuilding: 0
@@ -35,3 +35,5 @@ MonoBehaviour:
   startsUnlocked: 1
   experience: 30
   processTime: 0.18
+  halfScaleDrop: 0
+  maxHealth: 0

@@ -5,8 +5,8 @@ using UnityEngine;
 public class CreateSlots : MonoBehaviour
 {
     [SerializeField] GameObject slotPrefab;
-    [SerializeField] int slotAmout;
     [SerializeField] Inventory inventory;
+    [SerializeField] int slotAmout;
 
     public void Init()
     {

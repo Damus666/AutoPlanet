@@ -16,21 +16,23 @@ public class LightIntensity
 
 public class Building : MonoBehaviour
 {
-    public Item referenceItem;
     Interface thisInterface;
-    protected Constants constants;
-    public bool hasEnergy;
     float energyRangeDistace = 12;
+    Slider healthSlider;
+
+    protected Constants constants;
     protected LineRenderer lineRenderer;
     protected SpriteRenderer spriteRenderer;
     protected UnityEngine.Rendering.Universal.Light2D thisLight;
+
+    public Item referenceItem;
     public bool isWorking;
+    public bool hasEnergy;
+    public bool needElectricityToInteract = false;
     public Vector3 lineOffset = Vector3.zero;
     public List<Checkpoint> checkpoints = new();
-    public bool needElectricityToInteract = false;
     public float health;
     public float maxHealth;
-    Slider healthSlider;
 
     public bool DropSelf()
     {

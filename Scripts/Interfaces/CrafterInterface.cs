@@ -8,22 +8,27 @@ using UnityEngine.Events;
 
 public class CrafterInterface : Interface
 {
-    [SerializeField] public Slider progressSlider;
+    [Header("------------------------------------------------------")]
     [SerializeField] GameObject itemSelectionHolder;
-    [SerializeField] Transform actualHolder;
     [SerializeField] GameObject normalHolder;
     [SerializeField] GameObject itemSelectionPrefab;
+
+    [SerializeField] Transform actualHolder;
+    [SerializeField] Sprite emptyImage;
     [SerializeField] Image itemSelectedImage;
-    [SerializeField] HoverOutlineEffect itemSelectedEffect;
-    [SerializeField] public List<Slot> inputSlots = new();
-    [SerializeField] public Slot outputSlot;
     [SerializeField] List<TMP_InputField> inputFields = new();
     [SerializeField] TMP_InputField outputField;
-    [SerializeField] Sprite emptyImage;
+
+    [SerializeField] HoverOutlineEffect itemSelectedEffect;
     [SerializeField] AllItems allItemsHolder;
-    public Crafter currentCrafter;
     [SerializeField] bool isSelecting;
+
     System.Func<TMP_InputField, bool> checkCondition;
+
+    public Slider progressSlider;
+    public List<Slot> inputSlots = new();
+    public Slot outputSlot;
+    public Crafter currentCrafter;
 
     private void Awake()
     {

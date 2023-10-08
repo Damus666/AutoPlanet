@@ -5,11 +5,13 @@ using UnityEngine;
 public class Breaker : Building
 {
     float activationDistance = 2;
+    BoxCollider2D boxcollider;
+
     Player player;
+    ToolInteract toolInteract;
+
     Vector3 offset = new Vector3(0.15f,0.3f,0);
     Vector3 leftOffset = new Vector3(-0.15f, 0.3f, 0);
-    ToolInteract toolInteract;
-    BoxCollider2D boxcollider;
 
     // Update is called once per frame
     void Update()

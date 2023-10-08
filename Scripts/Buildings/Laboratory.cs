@@ -6,13 +6,15 @@ public class Laboratory : Building
 {
     Sprite onSprite;
     Sprite offSprite;
-    public Item itemProcessing;
-    public int amount;
+    SpriteRenderer itemShower;
+    SpriteRenderer itemShowerShadow;
+
     LaboratoryInterface lInt;
     UnlockManager unlockManager;
     float startTime;
-    SpriteRenderer itemShower;
-    SpriteRenderer itemShowerShadow;
+
+    public Item itemProcessing;
+    public int amount;
 
     public override void BuildingDestroyed(Inventory inventory)
     {

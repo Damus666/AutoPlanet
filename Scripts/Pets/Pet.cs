@@ -11,22 +11,26 @@ public enum PetType
 
 public class Pet : MonoBehaviour
 {
-    public PetType type;
-    public int specialID = 3;
+    [SerializeField] protected bool isGoingBack;
+    [SerializeField] protected Transform targetToFollow;
+
     protected bool shouldFollowPlayer = true;
     protected Constants constants;
     protected Transform playerT;
-    [SerializeField] protected Transform targetToFollow;
+    
     Vector3 negOffset;
     Vector3 animationOffset = Vector3.zero;
+    Vector3 normalScale = new Vector3(0.75f, 0.75f, 0);
+    Vector3 facingRightScale = new Vector3(-0.75f, 0.75f, 0);
+
     int animationDirection = 1;
     float maxAnimationY = 0.3f;
     float animSpeed = 1;
-    Vector3 normalScale = new Vector3(0.75f, 0.75f, 0);
-    Vector3 facingRightScale = new Vector3(-0.75f, 0.75f, 0);
     bool facingLeft = true;
     ParticleSystem particles;
-    [SerializeField] protected bool isGoingBack;
+    
+    public PetType type;
+    public int specialID = 3;
 
     protected void Follow()
     {

@@ -26,22 +26,26 @@ public class Roboclone : Building
 {
     Checkpoint checkpoint1;
     Checkpoint checkpoint2;
-    Building nextBuilding;
     Checkpoint selectedCheckpoint;
-    public string botID;
-    Vector3 direction;
+
+    Building nextBuilding;
+    ParticleSystem botParticles;
+    SpriteRenderer handsRenderer;
+    Sprite emptySprite;
+    RobocloneInterface rbInt;
+
     float speed;
-    public InternalSlot storage = new();
+    float lastOrientationChange;
+    float minOrientationChangeTime = 0.1f;
+
+    Vector3 direction;
     Vector3 normalScale = new Vector3(1, 1, 1);
     Vector3 flipScale = new Vector3(-1, 1, 1);
     Vector3 normalRot = new Vector3(45,90,0);
     Vector3 flipRot = new Vector3(135,90,0);
-    ParticleSystem botParticles;
-    SpriteRenderer handsRenderer;
-    Sprite emptySprite;
-    float lastOrientationChange;
-    float minOrientationChangeTime = 0.1f;
-    RobocloneInterface rbInt;
+
+    public string botID;
+    public InternalSlot storage = new();
 
     public override void BuildingDestroyed(Inventory inventory)
     {

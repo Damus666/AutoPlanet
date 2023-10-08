@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class Crafter : Building
 {
-    Sprite offSprite;
-    Sprite onSprite;
     CrafterInterface cInt;
     SpriteRenderer preview;
-    public Item selectedItem;
-    public List<InternalSlot> storages = new();
-    public InternalSlot output=new();
     ParticleSystem particles;
     CrafterAnimator animator;
+
+    Sprite offSprite;
+    Sprite onSprite;
     float startTime;
     int outputAmount=1;
+
+    public Item selectedItem;
+    public List<InternalSlot> storages = new();
+    public InternalSlot output = new();
 
     public override void BuildingDestroyed(Inventory inventory)
     {

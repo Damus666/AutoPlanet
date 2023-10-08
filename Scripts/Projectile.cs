@@ -23,23 +23,23 @@ public class Projectile : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        if (other.gameObject.GetComponent<Player>()){
+        if (other.gameObject.TryGetComponent(out Player player)){
             if (!isFromPlayer){
-                other.gameObject.GetComponent<Player>().Damage(damage);
+                player.Damage(damage);
                 Destroy(gameObject);
             }
-        } else if (other.gameObject.GetComponent<Enemy>())
+        } else if (other.gameObject.TryGetComponent(out Enemy enemy))
         {
             if (isFromPlayer)
             {
-                other.gameObject.GetComponent<Enemy>().Damage(damage);
+                enemy.Damage(damage);
                 Destroy(gameObject);
             }
-        } else if (other.gameObject.GetComponent<EnemySpawner>())
+        } else if (other.gameObject.TryGetComponent(out EnemySpawner spawner))
         {
             if (isFromPlayer)
             {
-                other.gameObject.GetComponent<EnemySpawner>().Damage(damage);
+                spawner.Damage(damage);
                 Destroy(gameObject);
             }
         }

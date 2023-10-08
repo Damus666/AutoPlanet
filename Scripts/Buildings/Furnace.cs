@@ -6,13 +6,14 @@ public class Furnace : Building
 {
     Sprite onSprite;
     Sprite offSprite;
-    public Item itemSmelting;
-    public int amount;
     FurnaceInterface fInt;
     Item nextFinalResult;
+    float startTime;
+
+    public Item itemSmelting;
+    public int amount;
     public Item outputItem;
     public int outputAmount;
-    float startTime;
 
     public override void BuildingDestroyed(Inventory inventory)
     {

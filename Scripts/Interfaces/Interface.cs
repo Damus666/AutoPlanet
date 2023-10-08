@@ -26,10 +26,10 @@ public class Interface : MonoBehaviour
 {
     public InterfaceType type = InterfaceType.Generic;
     public string title;
-    public Inventory inventory;
-    [SerializeField] TextMeshProUGUI titleTxt;
     public bool isOpen;
+    public Inventory inventory;
     public Constants constants;
+    [SerializeField] TextMeshProUGUI titleTxt;
 
     private void Awake()
     {

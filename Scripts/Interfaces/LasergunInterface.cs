@@ -6,10 +6,12 @@ using UnityEngine.Events;
 
 public class LasergunInterface : Interface
 {
-    public LaserGun currentGun;
-    public Slot inputSlot;
+    [Header("------------------------------------------------------")]
     [SerializeField] TMP_InputField inputField;
 
+    public Slot inputSlot;
+    public LaserGun currentGun;
+    
     private void Awake()
     {
         inputSlot.slotContentChanged.AddListener(new UnityAction(STORAGESLOTCHANGE));

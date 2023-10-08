@@ -6,27 +6,31 @@ using UnityEngine.UI;
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] List<EnemyData> enemyDatas=new();
-    [SerializeField] float distanceFromPlayer;
     [SerializeField] GameObject enemyPrefab;
-    [SerializeField] float health;
-    [SerializeField] int enemyNum;
-    [SerializeField] float baseSpawnCooldown;
-    [SerializeField] float criticSpawnCooldown;
     [SerializeField] GameObject expeditionPrefab;
     [SerializeField] Slider healthSlider;
+    [SerializeField] InfoData infoData;
+
+    [SerializeField] int enemyNum;
     [SerializeField] float healthRefillSpeed;
     [SerializeField] float healthRefillCooldown;
-    [SerializeField] InfoData infoData;
-    float lastDamage;
+    [SerializeField] float distanceFromPlayer;
+    [SerializeField] float baseSpawnCooldown;
+    [SerializeField] float criticSpawnCooldown;
+    [SerializeField] float health;
+    
     EnemyExpedition expedition;
-    public List<Enemy> children = new();
     Transform player;
-    public bool isOff;
-    bool canSpawn=false;
+    
     float lastSpawn;
     float maxHealth;
-    string baseDescription;
     float spawnCooldown;
+    float lastDamage;
+    string baseDescription;
+    bool canSpawn = false;
+
+    public bool isOff;
+    public List<Enemy> children = new();
 
     private void OnDestroy()
     {

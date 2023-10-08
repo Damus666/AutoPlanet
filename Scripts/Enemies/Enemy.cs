@@ -18,40 +18,44 @@ public enum EnemyStatus
 public class Enemy : MonoBehaviour
 {
     [SerializeField] ParticleSystem bloodParticles;
+    [SerializeField] Transform thrusterParticles;
+    [SerializeField] float direction;
+    [SerializeField] float dirdir = 1;
+    [SerializeField] float searchCooldown = 1;
+    [SerializeField] float distFromPlayer = 50;
+    [SerializeField] bool wantToStop = false;
+    
+    SpriteRenderer spriteRenderer;
+    Transform attackTarget;
+    Transform playerT;
+
+    InfoData infoData;
+    EnemySpawner spawner;
+    AudioSource hitSound;
+
+    Vector3 normalScale;
+    Vector3 facingLeftScale;
+    Vector3 animationOffset = Vector3.zero;
+
+    float lastSearch;
+    float lastAttack;
+    float maxHomeDistance = 10;
+    float maxAnimationY = 0.4f;
+    float animSpeed = 1;
+    float y;
+    float yDir;
+    int animationDirection = 1;
+
+    bool canAttack;
+    bool canAttackInternal = true;
+    bool dead = false;
+    string baseDescription;
+
     public EnemyType enemyType = EnemyType.Base;
     public EnemyData enemyData;
     public EnemyStatus status = EnemyStatus.Wonder;
     public float health;
-    InfoData infoData;
-    SpriteRenderer spriteRenderer;
-    Transform attackTarget;
-    EnemySpawner spawner;
-    [SerializeField] float horizontalMovement;
-    [SerializeField] float direction;
-    [SerializeField] float dirdir=1;
-    [SerializeField] bool wantToStop=false;
-    [SerializeField] Transform thrusterParticles;
-    [SerializeField] float searchCooldown=1;
-    float lastSearch;
-    Transform playerT;
-    [SerializeField] float distFromPlayer=50;
-    bool canAttack;
-    float lastAttack;
-    AudioSource hitSound;
-    float maxHomeDistance=10;
-    bool canAttackInternal = true;
-    Vector3 normalScale;
-    Vector3 facingLeftScale;
-    bool facingRight = true;
-    Vector3 animationOffset = Vector3.zero;
-    float maxAnimationY = 0.4f;
-    float animSpeed = 1;
-    int animationDirection = 1;
-    float y;
-    float yDir;
     public bool canSearchOtherTargets;
-    string baseDescription;
-    bool dead = false;
 
     public void Setup(EnemyData enemyData,EnemySpawner spawner,Transform p)
     {
@@ -108,6 +112,8 @@ public class Enemy : MonoBehaviour
         spriteRenderer.color = new Color(0, 0, 0, 0);
         canAttack = false;
         dead = true;
+        if (Random.Range(0,100) < enemyData.dropChance)
+            playerT.GetComponent<Inventory>().DropMultiple(enemyData.dropItem, enemyData.dropAmount, transform.position);
         Destroy(thrusterParticles.gameObject);
         Destroy(GetComponent<CircleCollider2D>());
         Destroy(gameObject,1);
@@ -187,7 +193,6 @@ public class Enemy : MonoBehaviour
                 }
             }
             //move
-            horizontalMovement = direction * speed * deltaTime;
             if (spawner != null)
             {
                 float dist = spawner.transform.position.x - myX;

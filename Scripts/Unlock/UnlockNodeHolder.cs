@@ -13,6 +13,7 @@ public class UnlockNodeHolder : MonoBehaviour
     [SerializeField] GameObject outputImagePrefab;
     [SerializeField] Slider progressSlider;
     [SerializeField] Image outlineImage;
+
     [Header("User Feedback"),SerializeField]
     Color canUnlockColor;
     [SerializeField] Color canUnlockHovered;
@@ -21,7 +22,6 @@ public class UnlockNodeHolder : MonoBehaviour
     [SerializeField] Color isUnlockingColor;
     [SerializeField] Color isResearchingColor;
     [SerializeField] List<Image> lines=new();
-
 
     UnlockManager unlockManager;
     bool canUnlock = false;

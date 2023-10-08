@@ -10,14 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ce50037823ee4c42bc15204f4ededc6, type: 3}
-  m_Name: 5LaserAmmo
+  m_Name: 33LaserSword
   m_EditorClassIdentifier: 
-  itemName: Laser Ammo
-  ID: 5
-  description: Shot by the player or laser gun, contains 10 projectiles that deal
-    10 damage each
-  texture: {fileID: 21300000, guid: e603ab7f2c8873047bf18ad66bac8e3b, type: 3}
-  stackSize: 200
+  itemName: Laser Sword
+  ID: 33
+  description: Deals melee damage
+  texture: {fileID: 21300000, guid: 03c3bbc338fa7d5409a9cbdc542a8937, type: 3}
+  stackSize: 1
   isBuilding: 0
   buildingData:
     targetInterface: 0
@@ -27,18 +26,18 @@ MonoBehaviour:
     needElectricity: 1
     canInteract: 1
   carftType: 2
-  craftTime: 3
+  craftTime: 30
   smeltedVersion: {fileID: 0}
   requirements:
-  - item: {fileID: 11400000, guid: 5bde1df2c0049af4b8609824e5c994e2, type: 2}
-    amount: 1
   - item: {fileID: 11400000, guid: b2b8d1b55ef815f45a5c71efd5deba39, type: 2}
     amount: 1
+  - item: {fileID: 11400000, guid: 9ae72b845676ed04a9571f364564c90d, type: 2}
+    amount: 40
   craftAmount: 1
-  specialID: 6
-  specialLevel: 0
-  startsUnlocked: 1
-  experience: 35
-  processTime: 0.18
-  halfScaleDrop: 0
+  specialID: 7
+  specialLevel: 18
+  startsUnlocked: 0
+  experience: 300
+  processTime: 5
+  halfScaleDrop: 1
   maxHealth: 0

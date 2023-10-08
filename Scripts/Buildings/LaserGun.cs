@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class LaserGun : Building
 {
-    public InternalSlot storage;
-    public int ammo;
+    Vector3 normalScale = new Vector3(1, 1, 0);
+    Vector3 flippedScale = new Vector3(-1, 1, 0);
     LasergunInterface lInt;
+
     float lastShoot;
     float timeBetweenShoot = 0.8f;
     float damage = 20f;
+
+    public InternalSlot storage;
+    public int ammo;
     public bool canShoot { get { return ammo > 0 && hasEnergy; } }
-    Vector3 normalScale = new Vector3(1,1,0);
-    Vector3 flippedScale = new Vector3(-1,1,0);
 
     public override void FinishInit()
     {

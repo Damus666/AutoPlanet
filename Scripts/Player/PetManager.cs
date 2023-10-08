@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PetManager : MonoBehaviour
 {
-    Pet currentPet;
     [SerializeField] Constants constants;
     [SerializeField] GameObject petPrefab;
+    Pet currentPet;
 
     public void OnPetSlotChange(Slot petSlot)
     {

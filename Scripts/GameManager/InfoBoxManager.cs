@@ -4,23 +4,28 @@ using UnityEngine;
 
 public class InfoBoxManager : MonoBehaviour
 {
-    [SerializeField] InfoBox infoBox;
+    
     [SerializeField] GameObject infoBoxDrop;
-    [SerializeField] Camera mainCamera;
-    [SerializeField] Inventory inventory;
-    [SerializeField] Transform blockSelection;
-    [SerializeField] Color normalBlockSelectionColor;
-    [SerializeField] Color farBlockSelectionColor;
-    [SerializeField] SpriteRenderer blockSelectionRenderer;
-    [SerializeField] ToolInteract toolInteract;
-    [SerializeField] BuildingManager buildingManager;
-    [SerializeField] Tools tools;
-    [SerializeField] LayerMask playerLayer;
-    [SerializeField] LayerMask dropLayer;
-    [SerializeField] LaserAmmoManager laserAmmoManager;
     [SerializeField] GameObject infoBoxCrafting;
     [SerializeField] GameObject infoBoxOre;
     [SerializeField] GameObject infoBoxBuilding;
+
+    [SerializeField] Camera mainCamera;
+    [SerializeField] Transform blockSelection;
+    [SerializeField] LayerMask playerLayer;
+    [SerializeField] LayerMask dropLayer;
+
+    [SerializeField] Color normalBlockSelectionColor;
+    [SerializeField] Color farBlockSelectionColor;
+    [SerializeField] SpriteRenderer blockSelectionRenderer;
+
+    [SerializeField] InfoBox infoBox;
+    [SerializeField] ToolInteract toolInteract;
+    [SerializeField] BuildingManager buildingManager;
+    [SerializeField] Tools tools;
+    [SerializeField] Inventory inventory;
+    [SerializeField] LaserAmmoManager laserAmmoManager;
+
     bool wasActive;
     bool wasSelectionActive;
 

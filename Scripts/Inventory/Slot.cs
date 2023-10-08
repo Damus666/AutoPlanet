@@ -8,6 +8,17 @@ using UnityEngine.Events;
 
 public class Slot : MonoBehaviour
 {
+    [SerializeField] Sprite emptyImage;
+    [SerializeField] Image spriteRenderer;
+    [SerializeField] TextMeshProUGUI amountTxt;
+    [SerializeField] Color normalOutlineColor;
+    [SerializeField] Color hoveredOutlineColor = Color.white;
+    [SerializeField] Image outlineRenderer;
+
+    FloatingSlot floatingSlot;
+    InfoBoxManager boxManager;
+    bool isHovering;
+
     public Item item = null;
     public int amount;
     public int ID;
@@ -15,30 +26,10 @@ public class Slot : MonoBehaviour
     public bool onlySmeltable = false;
     public bool whiteList = false;
     public List<int> allowedIDs = new List<int>();
-    [SerializeField] Sprite emptyImage;
-    [SerializeField] Image spriteRenderer;
-    [SerializeField] TextMeshProUGUI amountTxt;
-    FloatingSlot floatingSlot;
-    InfoBoxManager boxManager;
-    [SerializeField] Color normalOutlineColor;
-    [SerializeField] Color hoveredOutlineColor = Color.white;
-    [SerializeField] Image outlineRenderer;
+
     public UnityEvent slotContentChanged = new UnityEvent();
-    public bool isEmpty
-    {
-        get
-        {
-            return amount == 0;
-        }
-    }
-    public bool isFull
-    {
-        get
-        {
-            return amount == item.stackSize;
-        }
-    }
-    [SerializeField] bool isHovering;
+    public bool isEmpty { get { return amount == 0; } }
+    public bool isFull { get { return amount == item.stackSize; } }
 
     public void POINTERENTER()
     {
@@ -55,11 +46,7 @@ public class Slot : MonoBehaviour
     public void POINTERCLICK(BaseEventData eventData)
     {
         PointerEventData pointerData = eventData as PointerEventData;
-        bool isLeft = true;
-        if (pointerData.button == PointerEventData.InputButton.Right)
-        {
-            isLeft = false;
-        }
+        bool isLeft = !(pointerData.button == PointerEventData.InputButton.Right);
         if (floatingSlot.isFloating)
         {
             if (canPut)
@@ -145,6 +132,7 @@ public class Slot : MonoBehaviour
                                 floatingSlot.RefreshImage();
                                 RefreshGraphics();
                                 slotContentChanged.Invoke();
+                                floatingSlot.RefreshBuildingManager();
                             }
                         }
                     }

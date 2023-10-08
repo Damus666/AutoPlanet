@@ -7,17 +7,20 @@ public class BuildingRuntime : MonoBehaviour
     [SerializeField] SpriteRenderer image;
     [SerializeField] Color okColor;
     [SerializeField] Color badColor;
+
     [SerializeField] List<Transform> corners;
     [SerializeField] public List<Transform> blockChecks;
+
     [SerializeField] public GameObject energyRangeIndicator;
     [SerializeField] public GameObject healthBar;
-    Inventory inventory;
-    public bool isValid;
-    public bool isPlaced;
     [SerializeField] LayerMask petLayer;
     [SerializeField] Collider2D thisCollider;
 
-    public void Setup(Sprite image,bool isEnergy)
+    Inventory inventory;
+    public bool isValid;
+    public bool isPlaced;
+
+    public void Setup(Sprite image, bool isEnergy)
     {
         this.image.sprite = image;
         inventory = GameObject.Find("Player").GetComponent<Inventory>();

@@ -5,11 +5,13 @@ using TMPro;
 
 public class StorageInterface : Interface
 {
-    List<Slot> slots = new();
+    [Header("------------------------------------------------------")]
     [SerializeField] CreateSlots slotCreator;
-    public Storage currentStorage;
     [SerializeField] TMP_InputField inputField;
     [SerializeField] TMP_InputField outputField;
+
+    List<Slot> slots = new();
+    public Storage currentStorage;
 
     private void Awake()
     {

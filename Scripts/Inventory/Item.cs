@@ -14,23 +14,27 @@ public enum CraftType
 [CreateAssetMenu(menuName = "Core/Create Item", fileName = "NewItem", order = 0)]
 public class Item : ScriptableObject
 {
-    public string itemName;
+    [Header("Base")]public string itemName;
     public int ID;
     [TextArea] public string description;
     public Sprite texture;
-    public int stackSize;
-    public bool isBuilding;
+
+    [Header("Building")] public bool isBuilding;
     public BuildingData buildingData;
-    public CraftType carftType = CraftType.HandsAndCrafter;
+
+    [Header("Crafting")] public CraftType carftType = CraftType.HandsAndCrafter;
     public float craftTime;
     public Item smeltedVersion;
     public List<Requirement> requirements;
     public int craftAmount;
-    public int specialID=-1;
-    public int specialLevel = 0;
+
+    [Header("Details")] public int stackSize;
     public bool startsUnlocked;
     public int experience;
     public float processTime;
     public bool halfScaleDrop = false;
     public float maxHealth;
+
+    [Header("Special")] public int specialID=-1;
+    public int specialLevel = 0;
 }

@@ -5,8 +5,9 @@ using TMPro;
 
 public class RobocloneInterface : Interface
 {
-    public Roboclone currentBot;
+    [Header("------------------------------------------------------")]
     [SerializeField] TMP_InputField botIDInput;
+    public Roboclone currentBot;
 
     public void BotOpen(Roboclone clone)
     {
