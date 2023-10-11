@@ -14,8 +14,8 @@ public class MinerInterface : Interface
     public void OnOpen(Miner miner)
     {
         currentMiner = miner;
-        storageSlot.item = miner.storageItem;
-        storageSlot.amount = miner.storageAmount;
+        storageSlot.item = miner.storage.item;
+        storageSlot.amount = miner.storage.amount;
         storageSlot.RefreshGraphics();
         outputField.text = currentMiner.checkpoints[0].checkpointID;
     }

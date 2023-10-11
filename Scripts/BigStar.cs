@@ -10,19 +10,36 @@ public class BigStar : MonoBehaviour
     [SerializeField] SpriteRenderer dustRenderer;
     const string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const string numbers = "1234567890";
+    public string starName;
+    public int index;
 
-    public void Awake()
+    public void AutoSetup()
     {
-        int index = Random.Range(0, sprites.Count);
+        index = Random.Range(0, sprites.Count);
         GetComponent<SpriteRenderer>().sprite = sprites[index];
         InfoData info = GetComponent<InfoData>();
         info.texture = sprites[index];
         info.description = "Star ID: " + GenID();
+        starName = info.description;
         Color c = dustColors[index];
         c.a = 0.5f;
         dustRenderer.color = c;
         float size = Random.Range(sizeRange.x, sizeRange.y);
         transform.localScale = new Vector3(size, size, 1);
+    }
+
+    public void ManualSetup(int index, string starName, float size)
+    {
+        GetComponent<SpriteRenderer>().sprite = sprites[index];
+        InfoData info = GetComponent<InfoData>();
+        info.texture = sprites[index];
+        info.description = starName;
+        Color c = dustColors[index];
+        c.a = 0.5f;
+        dustRenderer.color = c;
+        transform.localScale = new Vector3(size, size, 1);
+        this.starName = starName;
+        this.index = index;
     }
 
     public string GenID()

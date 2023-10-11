@@ -9,6 +9,7 @@ public class Chunk : MonoBehaviour
     [SerializeField] GameObject tilePrefab;
     [SerializeField] int chunkRadius = 10;
     [SerializeField] Color deadTileColor;
+
     [Header("Objects")]
     [SerializeField] GameObject mushroomPrefab;
     [SerializeField] float mushroomChance = 10;
@@ -25,7 +26,7 @@ public class Chunk : MonoBehaviour
     [SerializeField] WorldObjectData enemySpawnerObj;
     [SerializeField] GameObject enemySpawnerPrefab;
     [SerializeField] float enemySpawnerChance = 3;
-    bool hasMushroom = false;
+    
     [Header("Star Setup")]
     [SerializeField] GameObject starPrefab;
     //[SerializeField] int starAmount;
@@ -41,18 +42,108 @@ public class Chunk : MonoBehaviour
     [SerializeField] GameObject bigStarPrefab;
     [SerializeField] float bigStarChance;
 
+    bool isNew = true;
+    bool hasMushroom = false;
     bool isOneEmpty;
     int seed;
     int oreangle=0;
     public bool canDisable = false;
     EnemySpawner spawner;
+    SaveManager saveManager;
+    SaveChunk saveChunk;
+    int saveX;
+    int saveY;
+
+    List<GameObject> decorations = new();
+    List<GameObject> bigDecorations = new();
+    List<GameObject> caveDecorations = new();
+    List<GameObject> dusts = new();
+    List<GameObject> oxygenPlants = new();
+    GameObject bigStar;
+
+    public SaveChunk SaveData()
+    {
+        SaveChunk chunkData = new();
+        chunkData.x = saveX;
+        chunkData.y = saveY;
+        foreach (GameObject decoObj in decorations)
+        {
+            if (decoObj == null) continue;
+            chunkData.decorations.Add(new SaveDecoration
+            {
+                position = decoObj.transform.position,
+                worldDataName = decoObj.GetComponent<InfoData>().data.visualName
+            });
+        }
+        foreach (GameObject decoObj in bigDecorations)
+        {
+            if (decoObj == null) continue;
+            chunkData.bigDecorations.Add(new SaveBigDecoration
+            {
+                position = decoObj.transform.position,
+                worldDataName = decoObj.GetComponent<InfoData>().data.visualName
+            });
+        }
+        foreach (GameObject opObj in oxygenPlants)
+        {
+            if (opObj == null) continue;
+            chunkData.oxygenPlants.Add(new SaveOxygenPlant
+            {
+                position = opObj.transform.position,
+            });
+        }
+        foreach (GameObject decoObj in caveDecorations)
+        {
+            if (decoObj == null) continue;
+            chunkData.caveDecorations.Add(new SaveCaveDecoration
+            {
+                position = decoObj.transform.position,
+                worldDataName = decoObj.GetComponent<InfoData>().data.visualName
+            });
+        }
+        foreach (GameObject dustObj in dusts)
+        {
+            if (dustObj == null) continue;
+            chunkData.dusts.Add(new SaveDust
+            {
+                localPosition = dustObj.transform.localPosition,
+                color = dustObj.GetComponent<SpriteRenderer>().color,
+                scale = dustObj.transform.localScale.x
+            });
+        }
+        if (bigStar)
+        {
+            chunkData.bigStar = new SaveBigStar
+            {
+                localPosition = bigStar.transform.localPosition,
+                index = bigStar.GetComponent<BigStar>().index,
+                name = bigStar.GetComponent<BigStar>().starName,
+                scale = bigStar.transform.localScale.x,
+                alive = true
+            };
+        }
+        if (spawner)
+        {
+            chunkData.spawner = new SaveSpawner
+            {
+                position = spawner.transform.position,
+                health = spawner.GetComponent<EnemySpawner>().Health,
+                alive = true
+            };
+        }
+        return chunkData;
+    }
 
     private void Awake()
     {
+        saveX = (int)transform.position.x;
+        saveY = (int)transform.position.y;
         seed = GameObject.Find("GameManager").GetComponent<Constants>().seed;
+        saveManager = GameObject.Find("SavingSystem").GetComponent<SaveManager>();
+        saveChunk = saveManager.GetChunkLoadedData(saveX, saveY);
+        if (saveChunk != null)
+            isNew = false;
         StartCoroutine(GenerateChunk());
-        //GenerateChunk();
-        
     }
 
     public void DISABLE()
@@ -75,7 +166,7 @@ public class Chunk : MonoBehaviour
     {
         for (int x = -chunkRadius; x <= chunkRadius; x++)
         {
-            yield return new WaitForSeconds(0.001f);
+            yield return new WaitForSeconds(0.00085f);
             // X LOOP
             int realX = (int)transform.position.x + x;
             float height = GetNoiseValue(realX + seed, 0, planetData.surfaceNoise) * planetData.heightMultiplier;
@@ -96,7 +187,7 @@ public class Chunk : MonoBehaviour
                     if (!done)
                     {
                         done = true;
-                        PLaceObject(realX, realY);
+                        PlaceObject(realX, realY);
                     }
                 }
                 else if (realY < height)
@@ -178,91 +269,151 @@ public class Chunk : MonoBehaviour
             PlaceDust();
             PlaceBigStar();
         }
+        if (!isNew)
+            LoadData();
+    }
+
+    void LoadData()
+    {
+        SaveChunk data = saveChunk;
+        if (data==null) return;
+
+        if (data.spawner.alive)
+            CreateEnemySpawner(data.spawner.position, data.spawner.health);
+
+        if (data.bigStar.alive)
+            CreateBigStar(data.bigStar.localPosition, data.bigStar.index, data.bigStar.name, data.bigStar.scale);
+
+        foreach (SaveOxygenPlant oxygenPlant in data.oxygenPlants)
+            CreateOxygenPlant(oxygenPlant.position);
+
+        foreach (SaveDecoration decoration in data.decorations)
+            CreateDecoration(decoration.position, saveManager.GetWorldDataFromName(decoration.worldDataName));
+
+        foreach (SaveCaveDecoration decoration in data.caveDecorations)
+            CreateCaveDecoration(decoration.position, saveManager.GetWorldDataFromName(decoration.worldDataName));
+
+        foreach (SaveBigDecoration decoration in data.bigDecorations)
+            CreateBigDecoration(decoration.position, saveManager.GetWorldDataFromName(decoration.worldDataName));
+
+        foreach (SaveDust dust in data.dusts)
+            CreateDust(dust.localPosition, dust.scale, dust.color);
     }
 
     void PlaceCaveDecoration(int realX, int realY){
-        if (Random.Range(0,100)<caveDecorationChance){
-            GameObject d = Instantiate(caveDecorationPrefab,transform);
-            d.transform.position = new Vector3(realX+0.5f, realY+0.5f,0);
+        if (!isNew) return;
+
+        if (Random.Range(0,100)<caveDecorationChance)
+        {
             WorldObjectData selected = caveDecorationObjects[Random.Range(0, caveDecorationObjects.Count)];
-            d.GetComponent<SpriteRenderer>().sprite = selected.texture;
-            d.GetComponent<SpriteRenderer>().color = deadTileColor;
-            if (selected.hasLight){
-                var light = d.AddComponent<UnityEngine.Rendering.Universal.Light2D>();
-                light.pointLightOuterRadius = 5;
-                light.intensity = 0.5f;
-            }
-            d.GetComponent<InfoData>().Set(selected);
+            CreateCaveDecoration(new Vector3(realX + 0.5f, realY + 0.5f, 0), selected);
         }
         else if (Random.Range(0f, 100f) < enemySpawnerChance/80)
         {
-            GameObject s = Instantiate(enemySpawnerPrefab, transform);
-            s.transform.position = new Vector3(realX + 0.5f, realY + 2, 0);
-            if (Random.Range(0f, 1f) < 0.5f)
-            {
-                s.GetComponent<SpriteRenderer>().flipX = true;
-            }
-            hasMushroom = true;
-            s.GetComponent<InfoData>().Set(enemySpawnerObj);
-            spawner = s.GetComponent<EnemySpawner>();
-            spawner.FinishInit();
+            CreateEnemySpawner(new Vector3(realX + 0.5f, realY + 2, 0), -1);
         }
     }
 
-    void PLaceObject(int realX, int realY){
+    void PlaceObject(int realX, int realY){
+        if (!isNew) return;
+
         if (!hasMushroom)
         {
-            if (Random.Range(0, 100) < mushroomChance){
-            GameObject m = Instantiate(mushroomPrefab, transform);
-            m.transform.position = new Vector3(realX + 0.5f, realY + 2, 0);
-            int index = Random.Range(0, mushroomObjetcs.Count);
-            WorldObjectData s = mushroomObjetcs[index];
-            m.GetComponent<SpriteRenderer>().sprite = s.texture;
-            var light = m.GetComponent<UnityEngine.Rendering.Universal.Light2D>();
-            light.color = s.lightColor;
-            
-            if (Random.Range(0f, 1f) < 0.5f)
+            if (Random.Range(0, 100) < mushroomChance)
             {
-                m.GetComponent<SpriteRenderer>().flipX = true;
+                WorldObjectData selected = mushroomObjetcs[Random.Range(0, mushroomObjetcs.Count)];
+                CreateBigDecoration(new Vector3(realX + 0.5f, realY + 2, 0), selected);
             }
-            hasMushroom = true;
-                m.GetComponent<InfoData>().Set(s);
-                WindObject windobj = m.AddComponent<WindObject>();
-                windobj.rotationLimit = 5;
-            }
-            else if (Random.Range(0,100)<oxygenPlantChance){
-                GameObject m = Instantiate(oxygenPlanetPrefab, transform);
-                m.transform.position = new Vector3(realX + 0.5f, realY + 2, 0);
-                if (Random.Range(0f, 1f) < 0.5f)
-                {
-                    m.GetComponent<SpriteRenderer>().flipX = true;
-                }
-                hasMushroom = true;
-                m.GetComponent<InfoData>().Set(oxygenPlantData);
+            else if (Random.Range(0,100)<oxygenPlantChance)
+            {
+                CreateOxygenPlant(new Vector3(realX + 0.5f, realY + 2, 0));
             } else if (Random.Range(0f, 100f) < enemySpawnerChance)
             {
-                GameObject s = Instantiate(enemySpawnerPrefab, transform);
-                s.transform.position = new Vector3(realX + 0.5f, realY + 2, 0);
-                if (Random.Range(0f, 1f) < 0.5f)
-                {
-                    s.GetComponent<SpriteRenderer>().flipX = true;
-                }
-                hasMushroom = true;
-                s.GetComponent<InfoData>().Set(enemySpawnerObj);
-                spawner = s.GetComponent<EnemySpawner>();
-                spawner.FinishInit();
+                CreateEnemySpawner(new Vector3(realX + 0.5f, realY + 2, 0), -1);
             }
         }
         else if (Random.Range(0, 100) < decorationChance)
         {
-            GameObject d = Instantiate(decorationPrefab, transform);
-            d.transform.position = new Vector3(realX + 0.5f, realY + 1.5f, 0);
             WorldObjectData selected = decorationObjects[Random.Range(0, decorationObjects.Count)];
-            d.GetComponent<SpriteRenderer>().sprite = selected.texture;
-            d.GetComponent<InfoData>().Set(selected);
-            WindObject windobj = d.AddComponent<WindObject>();
-            windobj.rotationLimit = 8;
+            CreateDecoration(new Vector3(realX + 0.5f, realY + 1.5f, 0), selected);
         }
+    }
+
+    void CreateOxygenPlant(Vector3 position)
+    {
+        GameObject m = Instantiate(oxygenPlanetPrefab, transform);
+        m.transform.position = position;
+        if (Random.Range(0f, 1f) < 0.5f)
+        {
+            m.GetComponent<SpriteRenderer>().flipX = true;
+        }
+        hasMushroom = true;
+        m.GetComponent<InfoData>().Set(oxygenPlantData);
+        oxygenPlants.Add(m);
+    }
+
+    void CreateEnemySpawner(Vector3 position, float health)
+    {
+        GameObject s = Instantiate(enemySpawnerPrefab, transform);
+        s.transform.position = position;
+        if (Random.Range(0f, 1f) < 0.5f)
+        {
+            s.GetComponent<SpriteRenderer>().flipX = true;
+        }
+        hasMushroom = true;
+        s.GetComponent<InfoData>().Set(enemySpawnerObj);
+        spawner = s.GetComponent<EnemySpawner>();
+        if ((int)health != -1)
+            spawner.SetHealth(health);
+        spawner.FinishInit();
+    }
+
+    void CreateDecoration(Vector3 position, WorldObjectData objData)
+    {
+        GameObject d = Instantiate(decorationPrefab, transform);
+        d.transform.position = position;
+        d.GetComponent<SpriteRenderer>().sprite = objData.texture;
+        d.GetComponent<InfoData>().Set(objData);
+        WindObject windobj = d.AddComponent<WindObject>();
+        windobj.rotationLimit = 8;
+        decorations.Add(d);
+    }
+
+    void CreateCaveDecoration(Vector3 position, WorldObjectData objData)
+    {
+        GameObject d = Instantiate(caveDecorationPrefab, transform);
+        d.transform.position = position;
+        
+        d.GetComponent<SpriteRenderer>().sprite = objData.texture;
+        d.GetComponent<SpriteRenderer>().color = deadTileColor;
+        if (objData.hasLight)
+        {
+            var light = d.AddComponent<UnityEngine.Rendering.Universal.Light2D>();
+            light.pointLightOuterRadius = 5;
+            light.intensity = 0.5f;
+        }
+        d.GetComponent<InfoData>().Set(objData);
+        caveDecorations.Add(d);
+    }
+
+    void CreateBigDecoration(Vector3 position, WorldObjectData objData)
+    {
+        GameObject m = Instantiate(mushroomPrefab, transform);
+        m.transform.position = position;
+        
+        m.GetComponent<SpriteRenderer>().sprite = objData.texture;
+        var light = m.GetComponent<UnityEngine.Rendering.Universal.Light2D>();
+        light.color = objData.lightColor;
+
+        if (Random.Range(0f, 1f) < 0.5f)
+        {
+            m.GetComponent<SpriteRenderer>().flipX = true;
+        }
+        hasMushroom = true;
+        m.GetComponent<InfoData>().Set(objData);
+        WindObject windobj = m.AddComponent<WindObject>();
+        windobj.rotationLimit = 5;
+        bigDecorations.Add(m);
     }
 
     void PlaceTile(int realX, int realY, WorldObjectData tileSelected, bool isAlive,bool rotate,int angle,bool isOre,float mineTime)
@@ -271,7 +422,7 @@ public class Chunk : MonoBehaviour
         newTile.transform.position = new Vector3(realX + 0.5f, realY + 0.5f, 0);
         newTile.GetComponent<SpriteRenderer>().sprite = tileSelected.texture;
         newTile.GetComponent<InfoData>().Set(tileSelected);
-        if (!isAlive)
+        if (!isAlive || saveManager.WasTileMined(newTile))
         {
             newTile.GetComponent<SpriteRenderer>().color = deadTileColor;
             newTile.GetComponent<BoxCollider2D>().enabled = false;
@@ -292,41 +443,67 @@ public class Chunk : MonoBehaviour
 
     void PlaceDust()
     {
+        if (!isNew) return;
+
         for (int i = 0; i < dustAmount; i++)
         {
             Vector3 position = new(Random.Range(-chunkRadius, chunkRadius), Random.Range(-chunkRadius, chunkRadius), 0);
             float size = Random.Range(dustSizeRange.x, dustSizeRange.y);
-            GameObject newDust = Instantiate(dustPrefab, transform);
-            newDust.transform.localPosition = position;
-            newDust.transform.localScale = new(size, size, 1);
             Color color = dustGradient.Evaluate(Random.Range(0f, 1f));
-            color.a = dustAlpha;
-            newDust.GetComponent<SpriteRenderer>().color = color;
+            CreateDust(position, size, color);
         }
     }
 
+    void CreateDust(Vector3 localPosition, float size, Color color)
+    {
+        GameObject newDust = Instantiate(dustPrefab, transform);
+        newDust.transform.localPosition = localPosition;
+        newDust.transform.localScale = new(size, size, 1);
+        color.a = dustAlpha;
+        newDust.GetComponent<SpriteRenderer>().color = color;
+        dusts.Add(newDust);
+    }
+
     void PlaceBigStar(){
+        if (!isNew) return;
+
         if (transform.position.y >= 20){
-        if (Random.Range(0f,100f)<starChance){
-            Vector3 position = new(Random.Range(-chunkRadius, chunkRadius), Random.Range(-chunkRadius, chunkRadius), 0);
-            GameObject newS = Instantiate(bigStarPrefab, transform);
-            newS.transform.localPosition = position;
+            if (Random.Range(0f,100f)<starChance){
+                Vector3 position = new(Random.Range(-chunkRadius, chunkRadius), Random.Range(-chunkRadius, chunkRadius), 0);
+                GameObject newS = Instantiate(bigStarPrefab, transform);
+                newS.transform.localPosition = position;
+                bigStar = newS;
+                newS.GetComponent<BigStar>().AutoSetup();
+            }
         }
-        }
+    }
+
+    void CreateBigStar(Vector3 localPosition, int index, string starName, float scale)
+    {
+        GameObject newS = Instantiate(bigStarPrefab, transform);
+        newS.transform.localPosition = localPosition;
+        bigStar = newS;
+        newS.GetComponent<BigStar>().ManualSetup(index, starName, scale);
     }
 
     void PlaceStar(int realX, int realY)
     {
         if (Random.Range(0, 100) < starChance)
         {
-            Vector3 position = new(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f), 0);
-            float size = Random.Range(starSizeRange.x, starSizeRange.y);
-            GameObject newStar = Instantiate(starPrefab, transform);
-            newStar.transform.position = new Vector3(realX, realY, 0) + position;
-            newStar.transform.localScale = new Vector3(size, size, 1);
             Color color = starColorGradient.Evaluate(Random.Range(0, 1f));
-            newStar.GetComponent<SpriteRenderer>().color = color;
+            float size = Random.Range(starSizeRange.x, starSizeRange.y);
+            CreateStar(realX, realY, color, size);
         }
+    }
+
+    void CreateStar(int realX, int realY, Color color, float size)
+    {
+        Vector3 position = new(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f), 0);
+        
+        GameObject newStar = Instantiate(starPrefab, transform);
+        newStar.transform.position = new Vector3(realX, realY, 0) + position;
+        newStar.transform.localScale = new Vector3(size, size, 1);
+        newStar.GetComponent<SpriteRenderer>().color = color;
     }
 
     float GetNoiseValue(int x, int y, NoiseSettings settings)

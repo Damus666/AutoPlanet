@@ -27,6 +27,50 @@ public class UnlockManager : MonoBehaviour
     Color green = Color.green;
     Color red = Color.red;
 
+    public void SaveData(SavePlayer data)
+    {
+        data.unlockXP = XP;
+        data.nextLevelXP = nextLevelXP;
+        data.unlockPoints = researchPoints;
+        data.unlockedNodes = unlockedNodes;
+        data.unlockedIDs = unlockedIDs;
+        data.isResearching = isResearching;
+        if (isResearching) data.nextUnlockNodeName = nextUnlockNode.nodeName;
+    }
+
+    public void LoadData(SavePlayer data)
+    {
+        XP = data.unlockXP;
+        researchPoints = data.unlockPoints;
+        nextLevelXP = data.nextLevelXP;
+        unlockedNodes = data.unlockedNodes;
+        unlockedIDs = data.unlockedIDs;
+        isResearching = data.isResearching;
+        foreach (var node in unlockBtns)
+        {
+            if (unlockedNodes.Contains(node.nodeData.nodeName))
+            {
+                node.IsDone();
+            }
+        }
+        if (isResearching)
+        {
+            foreach (var node in unlockBtns)
+            {
+                if (node.nodeData.nodeName == data.nextUnlockNodeName)
+                {
+                    nodeHolder = node;
+                    unlockSlider = node.slider;
+                    nextUnlockNode = node.nodeData;
+                    startUnlockTime = Time.time;
+                    node.isUnlocking = true;
+                    break;
+                }
+            }
+        }
+        RefreshInfo();
+    }
+
     public void RefreshInfo()
     {
         infoTxt.text = $"{researchPoints} Points - {XP}/{nextLevelXP} XP";

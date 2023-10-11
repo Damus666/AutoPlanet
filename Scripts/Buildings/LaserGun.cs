@@ -16,6 +16,21 @@ public class LaserGun : Building
     public int ammo;
     public bool canShoot { get { return ammo > 0 && hasEnergy; } }
 
+    public override SaveBuilding SaveData()
+    {
+        SaveBuilding data =  BaseSaveData();
+        data.storages.Add(new SaveSlot(storage));
+        data.intVar = ammo;
+        return data;
+    }
+
+    public override void LoadData(SaveBuilding data, SaveManager manager)
+    {
+        BaseLoadData(data);
+        storage = data.storages[0].ToSlot(manager);
+        ammo = data.intVar;
+    }
+
     public override void FinishInit()
     {
         storage = new(constants.ammoItem, constants.ammoStartAmount);

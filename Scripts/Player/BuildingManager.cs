@@ -7,6 +7,7 @@ public class BuildingManager : MonoBehaviour
     [SerializeField] FloatingSlot floatingSlot;
     [SerializeField] UnlockInterface unlockInterface;
     [SerializeField] Constants constants;
+    [SerializeField] SaveManager saveManager;
 
     [SerializeField] GameObject buildingPrefab;
     [SerializeField] Camera mainCamera;
@@ -14,6 +15,20 @@ public class BuildingManager : MonoBehaviour
     public float interactDistance = 15;
     GameObject currentBuilding;
     float lastPlace;
+
+    public void LoadData(List<SaveBuilding> buildings)
+    {
+        foreach (SaveBuilding data in buildings)
+        {
+            Item buildingItem = saveManager.GetItemFromID(data.itemID);
+            CreateBuilding(buildingItem);
+            currentBuilding.transform.position = data.position;
+            Building building = PlaceBuilding(buildingItem);
+            building.LoadData(data, saveManager);
+            currentBuilding = null;
+        }
+        constants.onNewBuildingEvent.Invoke();
+    }
 
     public void OnSlotChange()
     {
@@ -26,17 +41,22 @@ public class BuildingManager : MonoBehaviour
         {
             if (floatingSlot.item.isBuilding)
             {
-                currentBuilding = Instantiate(buildingPrefab);
-                currentBuilding.GetComponent<InfoData>().Set(floatingSlot.item);
-                currentBuilding.GetComponent<BuildingRuntime>().Setup(floatingSlot.item.texture,floatingSlot.item.buildingData.targetInterface == InterfaceType.OxygenSource || floatingSlot.item.buildingData.targetInterface == InterfaceType.OxygenDistributor);
-                if (floatingSlot.item.buildingData.buildingScale > 1)
-                {
-                    currentBuilding.transform.localScale = new Vector3(floatingSlot.item.buildingData.buildingScale, floatingSlot.item.buildingData.buildingScale, 1);
-                    if (floatingSlot.item.buildingData.targetInterface == InterfaceType.OxygenSource || floatingSlot.item.buildingData.targetInterface == InterfaceType.OxygenDistributor)
-                    {
-                        currentBuilding.GetComponent<BuildingRuntime>().energyRangeIndicator.transform.localScale = new Vector3(3.1f, 3.1f, 0);
-                    }
-                }
+                CreateBuilding(floatingSlot.item);
+            }
+        }
+    }
+
+    void CreateBuilding(Item item)
+    {
+        currentBuilding = Instantiate(buildingPrefab);
+        currentBuilding.GetComponent<InfoData>().Set(item);
+        currentBuilding.GetComponent<BuildingRuntime>().Setup(item.texture, item.buildingData.targetInterface == InterfaceType.OxygenSource || item.buildingData.targetInterface == InterfaceType.OxygenDistributor);
+        if (item.buildingData.buildingScale > 1)
+        {
+            currentBuilding.transform.localScale = new Vector3(item.buildingData.buildingScale, item.buildingData.buildingScale, 1);
+            if (item.buildingData.targetInterface == InterfaceType.OxygenSource || item.buildingData.targetInterface == InterfaceType.OxygenDistributor)
+            {
+                currentBuilding.GetComponent<BuildingRuntime>().energyRangeIndicator.transform.localScale = new Vector3(3.1f, 3.1f, 0);
             }
         }
     }
@@ -52,11 +72,11 @@ public class BuildingManager : MonoBehaviour
         }
     }
 
-    void PlaceBuilding()
+    Building PlaceBuilding(Item item)
     {
-        currentBuilding.GetComponent<BuildingRuntime>().OnPlace(floatingSlot.item.buildingData.destroyVegetation);
+        Item buildingData = item == null ? floatingSlot.item : item;
+        currentBuilding.GetComponent<BuildingRuntime>().OnPlace(buildingData.buildingData.destroyVegetation);
         // ADD BUILDING
-        Item buildingData = floatingSlot.item;
         switch (buildingData.buildingData.targetInterface)
         {
             case InterfaceType.Furnace:
@@ -151,6 +171,7 @@ public class BuildingManager : MonoBehaviour
                 break;
         }
         //
+        Building buildingComp = currentBuilding.GetComponent<Building>();
         currentBuilding = null;
         floatingSlot.amount--;
         floatingSlot.RefreshText();
@@ -166,7 +187,9 @@ public class BuildingManager : MonoBehaviour
         {
             dist.CheckEnergy();
         }
-        constants.onNewBuildingEvent.Invoke();
+        if (item == null)
+            constants.onNewBuildingEvent.Invoke();
+        return buildingComp;
     }
 
     private void Update()
@@ -199,7 +222,7 @@ public class BuildingManager : MonoBehaviour
         {
             if (currentBuilding.GetComponent<BuildingRuntime>().isValid)
             {
-                PlaceBuilding();
+                PlaceBuilding(null);
                 lastPlace = Time.time;
             }
         }

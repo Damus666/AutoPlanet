@@ -18,6 +18,32 @@ public class Crafter : Building
     public List<InternalSlot> storages = new();
     public InternalSlot output = new();
 
+    public override SaveBuilding SaveData()
+    {
+        SaveBuilding data = BaseSaveData();
+        data.storages.Add(new SaveSlot(selectedItem, 1));
+        data.storages.Add(new SaveSlot(output));
+        foreach (InternalSlot inputSlot in storages)
+        {
+            data.storages.Add(new SaveSlot(inputSlot));
+        }
+        return data;
+    }
+
+    public override void LoadData(SaveBuilding data, SaveManager manager)
+    {
+        BaseLoadData(data);
+        selectedItem = manager.GetItemFromID(data.storages[0].itemID);
+        output = data.storages[1].ToSlot(manager);
+        for (int i= 2; i < storages.Count; i++) {
+            storages[i - 2].Set(data.storages[i], manager);
+        }
+        if (selectedItem)
+        {
+            outputAmount = selectedItem.craftAmount;
+        }
+    }
+
     public override void BuildingDestroyed(Inventory inventory)
     {
         if (cInt.isOpen && cInt.currentCrafter == this)

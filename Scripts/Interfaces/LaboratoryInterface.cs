@@ -13,12 +13,11 @@ public class LaboratoryInterface : Interface
     public Slider progressSlider;
     public Laboratory currentLab;
     
-
     public void OnOpen(Laboratory lab)
     {
         currentLab = lab;
-        inputSlot.item = lab.itemProcessing;
-        inputSlot.amount = lab.amount;
+        inputSlot.item = lab.storage.item;
+        inputSlot.amount = lab.storage.amount;
         inputSlot.RefreshGraphics();
         progressSlider.value = 0;
         foreach (Checkpoint check in currentLab.checkpoints)

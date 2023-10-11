@@ -5,7 +5,8 @@ using UnityEngine.Events;
 
 public class Constants : MonoBehaviour
 {
-    [HideInInspector]public int seed = 0;
+    public SaveManager saveManager;
+    public int seed = 0;
 
     public Vector3 stats0Maxes = new Vector3(100, 100, 1);
     public Vector3 stats1Maxes = new Vector3(120, 120, 1.2f);
@@ -68,6 +69,9 @@ public class Constants : MonoBehaviour
 
     private void Start()
     {
-        seed = Random.Range(-10000, 10000);
+        if (saveManager.isNewWorld)
+            seed = Random.Range(-10000, 10000);
+        else
+            seed = saveManager.seed;
     }
 }

@@ -34,6 +34,55 @@ public class Building : MonoBehaviour
     public float health;
     public float maxHealth;
 
+    protected SaveBuilding BaseSaveData()
+    {
+        SaveBuilding saveBuilding = new SaveBuilding
+        {
+            itemID = referenceItem.ID,
+            needElectricityToInteract = needElectricityToInteract,
+            health = health,
+            position = transform.position,
+        };
+        foreach (Checkpoint c in checkpoints)
+        {
+            saveBuilding.checkpoints.Add(new SaveCheckpoint
+            {
+                ID = c.checkpointID,
+                isPut = c.type == CheckpointType.Put
+            });
+        }
+        return saveBuilding;
+    }
+
+    public virtual SaveBuilding SaveData()
+    {
+        return BaseSaveData();
+    }
+
+    protected void BaseLoadData(SaveBuilding data)
+    {
+        transform.position = data.position;
+        needElectricityToInteract = data.needElectricityToInteract;
+        health = data.health;
+        RefreshHealthSliderVisibility();
+        for (int i=0; i < data.checkpoints.Count; i++)
+        {
+            SaveCheckpoint saveCheckpoint = data.checkpoints[i];
+            Checkpoint checkpoint = checkpoints[i];
+            if ((saveCheckpoint.isPut && checkpoint.type == CheckpointType.Put) || 
+                (!saveCheckpoint.isPut && checkpoint.type == CheckpointType.Take))
+            {
+                checkpoint.checkpointID = saveCheckpoint.ID;
+            }
+        }
+        constants.onCheckpointChange.Invoke();
+    } 
+
+    public virtual void LoadData(SaveBuilding data, SaveManager manager)
+    {
+        BaseLoadData(data);
+    }
+
     public bool DropSelf()
     {
         return health >= referenceItem.maxHealth;

@@ -12,7 +12,8 @@ public class PetManager : MonoBehaviour
     {
         if (petSlot.isEmpty)
         {
-            Destroy(currentPet.gameObject);
+            if (currentPet)
+                Destroy(currentPet.gameObject);
             currentPet = null;
         }
         else

@@ -11,9 +11,11 @@ public class Tools : MonoBehaviour
     [SerializeField] float minXDistance;
     [SerializeField] float rightCorrectionAngle = 45;
     [SerializeField] float leftCorrectionAngle = 135;
+    [SerializeField] float runningOffset = 0.5f;
 
     [SerializeField] AudioSource clickSound;
     [SerializeField] CharacterController2D cc;
+    [SerializeField] Player player;
 
     [SerializeField] Transform mainPivot;
     [SerializeField] Transform center;
@@ -108,6 +110,13 @@ public class Tools : MonoBehaviour
         }
         if (currentTool != null)
         {
+            if (player.isRunning)
+            {
+                transform.localPosition = new Vector3(-runningOffset, 0, 0);
+            } else
+            {
+                transform.localPosition = Vector3.zero;
+            }
             Vector3 mousePos = Input.mousePosition;
             Vector3 toolPos = mainCamera.WorldToScreenPoint(currentTool.position);
             toolPos.z = 0;

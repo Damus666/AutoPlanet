@@ -18,6 +18,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] Player player;
     [SerializeField] PetManager petManager;
     [SerializeField] UFNS ufns;
+    [SerializeField] SaveManager saveManager;
 
     [SerializeField] Interface craftingInterface;
     [SerializeField] Interface unlockI;
@@ -35,6 +36,39 @@ public class Inventory : MonoBehaviour
 
     public FloatingSlot floatingSlot;
     public bool isMouseHovering;
+
+    public void SaveData(SavePlayer data)
+    {
+        foreach (Slot slot in slots)
+        {
+            if (slot.isEmpty) continue;
+            data.inventorySlots.Add(new SaveSlot(slot));
+        }
+        data.bodySlot = new SaveSlot(bodySlot);
+        data.petSlot = new SaveSlot(petSlot);
+    }
+
+    public void LoadData(SavePlayer data, List<SaveDrop> drops)
+    {
+        Clear();
+        if (!data.bodySlot.isEmpty)
+        {
+            bodySlot.SetItem(saveManager.GetItemFromID(data.bodySlot.itemID), data.bodySlot.amount);
+        }
+        if (!data.petSlot.isEmpty)
+        {
+            petSlot.SetItem(saveManager.GetItemFromID(data.petSlot.itemID), data.petSlot.amount);
+        }
+        foreach (SaveSlot slot in data.inventorySlots)
+        {
+            AddItem(saveManager.GetItemFromID(slot.itemID), slot.amount);
+        }
+        foreach (SaveDrop drop in drops)
+        {
+            SpawnDrop(saveManager.GetItemFromID(drop.itemID), drop.position);
+        }
+        SpecialSlotsChange();
+    }
 
     private void Awake()
     {
@@ -61,6 +95,14 @@ public class Inventory : MonoBehaviour
             {
                 unlockManager.unlockedIDs.Add(item.ID);
             }
+        }
+    }
+
+    public void Clear()
+    {
+        foreach (Slot slot in slots)
+        {
+            slot.SetItem(slot.item, 0);
         }
     }
 

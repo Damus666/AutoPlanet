@@ -10,10 +10,33 @@ public class Furnace : Building
     Item nextFinalResult;
     float startTime;
 
-    public Item itemSmelting;
-    public int amount;
-    public Item outputItem;
-    public int outputAmount;
+    public InternalSlot smeltingStorage = new();
+    public InternalSlot outputStorage = new();
+
+    public override SaveBuilding SaveData()
+    {
+        SaveBuilding data = BaseSaveData();
+        data.storages.Add(new SaveSlot(smeltingStorage));
+        data.storages.Add(new SaveSlot(outputStorage));
+        data.storages.Add(new SaveSlot(nextFinalResult, 1));
+        return data;
+    }
+
+    public override void LoadData(SaveBuilding data, SaveManager manager)
+    {
+        BaseLoadData(data);
+        smeltingStorage = data.storages[0].ToSlot(manager);
+        outputStorage = data.storages[1].ToSlot(manager);
+        nextFinalResult = manager.GetItemFromID(data.storages[2].itemID);
+        startTime = Time.time;
+        if (nextFinalResult != null)
+        {
+            isWorking = true;
+            spriteRenderer.sprite = onSprite;
+            thisLight.enabled = true;
+            Invoke(nameof(Smelt), nextFinalResult.craftTime);
+        }
+    }
 
     public override void BuildingDestroyed(Inventory inventory)
     {
@@ -21,8 +44,8 @@ public class Furnace : Building
         {
             inventory.Close();
         }
-        inventory.DropMultiple(itemSmelting, amount, transform.position);
-        inventory.DropMultiple(outputItem, outputAmount, transform.position);
+        inventory.DropMultiple(smeltingStorage, transform.position);
+        inventory.DropMultiple(outputStorage, transform.position);
     }
 
     public override void FinishInit()
@@ -42,11 +65,11 @@ public class Furnace : Building
 
     public override InternalSlot GetResource()
     {
-        InternalSlot slot = new InternalSlot(outputItem, outputAmount);
-        outputAmount = 0;
+        InternalSlot slot = new InternalSlot(outputStorage);
+        outputStorage.amount = 0;
         if (fInt.isOpen && fInt.currentFurnace == this)
         {
-            fInt.outputSlot.amount = outputAmount;
+            fInt.outputSlot.amount = outputStorage.amount;
             fInt.outputSlot.RefreshGraphics();
         }
         if (slot.isEmpty)
@@ -58,27 +81,28 @@ public class Furnace : Building
 
     public override bool CanPutResource(Item item, string ID = "")
     {
-        return (itemSmelting == null||(itemSmelting.ID == item.ID && amount <= itemSmelting.stackSize) || amount == 0) && item.smeltedVersion != null;
+        return (smeltingStorage.item == null||(smeltingStorage.item.ID == item.ID && smeltingStorage.amount <= smeltingStorage.item.stackSize) 
+            || smeltingStorage.amount == 0) && item.smeltedVersion != null;
     }
 
     public override int PutResource(Item item, int amount, string ID = "")
     {
-        itemSmelting = item;
-        this.amount += amount;
-        if (this.amount <= itemSmelting.stackSize)
+        smeltingStorage.item = item;
+        smeltingStorage.amount += amount;
+        if (smeltingStorage.amount <= smeltingStorage.item.stackSize)
         {
             if (fInt.isOpen && fInt.currentFurnace == this)
             {
-                fInt.inputSlot.SetItem(item,this.amount);
+                fInt.inputSlot.SetItem(item,smeltingStorage.amount);
             }
             return 0;
         } else
         {
-            int temp = this.amount - itemSmelting.stackSize;
-            this.amount = itemSmelting.stackSize;
+            int temp = smeltingStorage.amount - smeltingStorage.item.stackSize;
+            smeltingStorage.amount = smeltingStorage.item.stackSize;
             if (fInt.isOpen && fInt.currentFurnace == this)
             {
-                fInt.inputSlot.SetItem(item, this.amount);
+                fInt.inputSlot.SetItem(item, smeltingStorage.amount);
             }
             return temp;
         }
@@ -91,16 +115,16 @@ public class Furnace : Building
 
     void Smelt()
     {
-        if (amount <= 0 || !hasEnergy)
+        if (smeltingStorage.amount <= 0 || !hasEnergy)
         {
             spriteRenderer.sprite = offSprite;
             thisLight.enabled = false;
         }
-        outputItem = nextFinalResult;
-        outputAmount++;
+        outputStorage.item = nextFinalResult;
+        outputStorage.amount++;
         if (fInt.isOpen && fInt.currentFurnace == this)
         {
-            fInt.outputSlot.SetItem(outputItem, outputAmount);
+            fInt.outputSlot.SetItem(outputStorage.item, outputStorage.amount);
             fInt.progressSlider.value = 0;
         }
         isWorking = false;
@@ -110,21 +134,21 @@ public class Furnace : Building
     {
         if (fInt.isOpen && fInt.currentFurnace == this)
         {
-            if (fInt.inputSlot.item != itemSmelting)
+            if (fInt.inputSlot.item != smeltingStorage.item)
             {
                 if (fInt.inputSlot.item != null)
                 {
-                    itemSmelting = fInt.inputSlot.item;
-                    amount = fInt.inputSlot.amount;
+                    smeltingStorage.item = fInt.inputSlot.item;
+                    smeltingStorage.amount = fInt.inputSlot.amount;
                     
                 }
-            } else if (fInt.inputSlot.amount != amount)
+            } else if (fInt.inputSlot.amount != smeltingStorage.amount)
             {
-                amount = fInt.inputSlot.amount;
+                smeltingStorage.amount = fInt.inputSlot.amount;
             }
-            if (fInt.outputSlot.amount != outputAmount)
+            if (fInt.outputSlot.amount != outputStorage.amount)
             {
-                outputAmount = fInt.outputSlot.amount;
+                outputStorage.amount = fInt.outputSlot.amount;
             }
             if (isWorking)
             {
@@ -133,22 +157,23 @@ public class Furnace : Building
                 fInt.progressSlider.value = x;
             }
         }
-        if (amount > 0 && !isWorking && hasEnergy)
+        if (smeltingStorage.amount > 0 && !isWorking && hasEnergy)
         {
-            if (outputAmount < itemSmelting.smeltedVersion.stackSize)
+            if (outputStorage.amount < smeltingStorage.item.smeltedVersion.stackSize)
             {
-                if (outputItem == null || outputItem == itemSmelting.smeltedVersion || outputAmount == 0)
+                if (outputStorage.item == null || outputStorage.item == smeltingStorage.item.smeltedVersion 
+                    || outputStorage.amount == 0)
                 {
-                    amount--;
+                    smeltingStorage.amount--;
                     if (fInt.isOpen && fInt.currentFurnace == this)
                     {
-                        fInt.inputSlot.amount = amount;
+                        fInt.inputSlot.amount = smeltingStorage.amount;
                         fInt.inputSlot.RefreshGraphics();
                     }
                     isWorking = true;
                     spriteRenderer.sprite = onSprite;
                     thisLight.enabled = true;
-                    nextFinalResult = itemSmelting.smeltedVersion;
+                    nextFinalResult = smeltingStorage.item.smeltedVersion;
                     startTime = Time.time;
                     Invoke(nameof(Smelt), nextFinalResult.craftTime);
                 }

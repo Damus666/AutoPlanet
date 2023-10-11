@@ -10,8 +10,23 @@ public class Miner : Building
     Transform raycastPoint;
     Ore currentOre;
 
-    public Item storageItem;
-    public int storageAmount=0;
+    public InternalSlot storage = new();
+
+    public override SaveBuilding SaveData()
+    {
+        SaveBuilding data = BaseSaveData();
+        data.storages.Add(new SaveSlot(storage));
+        data.intVar = currentOre == null ? -1 : currentOre.amount;
+        return data;
+    }
+
+    public override void LoadData(SaveBuilding data, SaveManager manager)
+    {
+        BaseLoadData(data);
+        if (currentOre && data.intVar != -1)
+            currentOre.amount = data.intVar;
+        storage = data.storages[0].ToSlot(manager);
+    }
 
     public override void BuildingDestroyed(Inventory inventory)
     {
@@ -19,7 +34,7 @@ public class Miner : Building
         {
             inventory.Close();
         }
-        inventory.DropMultiple(storageItem, storageAmount, transform.position);
+        inventory.DropMultiple(storage, transform.position);
     }
 
     public override void FinishInit()
@@ -40,7 +55,7 @@ public class Miner : Building
             if (hit.collider.GetComponent<Ore>())
             {
                 currentOre = hit.collider.GetComponent<Ore>();
-                storageItem = currentOre.dropItem;
+                storage.item = currentOre.dropItem;
             }
         }
         checkpoints.Add(new Checkpoint(this, CheckpointType.Take));
@@ -49,11 +64,11 @@ public class Miner : Building
 
     public override InternalSlot GetResource()
     {
-        InternalSlot slot = new InternalSlot(storageItem, storageAmount);
-        storageAmount = 0;
+        InternalSlot slot = new InternalSlot(storage);
+        storage.amount = 0;
         if (mInt.isOpen && mInt.currentMiner == this)
         {
-            mInt.storageSlot.amount = storageAmount;
+            mInt.storageSlot.amount = storage.amount;
             mInt.storageSlot.RefreshGraphics();
         }
         if (slot.isEmpty)
@@ -75,7 +90,7 @@ public class Miner : Building
 
     void Mine()
     {
-        storageAmount++;
+        storage.amount++;
         isWorking = false;
         bool isDone = currentOre.Mine();
         if (isDone)
@@ -89,15 +104,15 @@ public class Miner : Building
             Destroy(gameObject);
         } else
         {
-            if (storageAmount >= storageItem.stackSize || !hasEnergy)
+            if (storage.amount >= storage.item.stackSize || !hasEnergy)
             {
                 spriteRenderer.sprite = offSprite;
                 thisLight.enabled = false;
             }
             if (mInt.isOpen && mInt.currentMiner == this)
             {
-                mInt.storageSlot.amount = storageAmount;
-                mInt.storageSlot.item = storageItem;
+                mInt.storageSlot.amount = storage.amount;
+                mInt.storageSlot.item = storage.item;
                 mInt.storageSlot.RefreshGraphics();
             }
         }
@@ -108,16 +123,16 @@ public class Miner : Building
     {
         if (mInt.isOpen && mInt.currentMiner == this)
         {
-            if (mInt.storageSlot.amount != storageAmount)
+            if (mInt.storageSlot.amount != storage.amount)
             {
-                storageAmount = mInt.storageSlot.amount;
+                storage.amount = mInt.storageSlot.amount;
             }
         }
         if (!isWorking)
         {
             if (currentOre != null && hasEnergy)
             {
-                if (storageAmount < storageItem.stackSize)
+                if (storage.amount < storage.item.stackSize)
                 {
                     isWorking = true;
                     spriteRenderer.sprite = onSprite;

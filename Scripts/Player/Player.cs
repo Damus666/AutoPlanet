@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     [SerializeField] Transform mainCamera;
     [SerializeField] CinemachineVirtualCamera cineCamera;
     [SerializeField] GameObject deathOverlay;
+    [SerializeField] GameObject UIObject;
 
     [SerializeField] ParticleSystem jetpackParticles;
     [SerializeField] ParticleSystem smokeParticles;
@@ -70,7 +71,8 @@ public class Player : MonoBehaviour
     [SerializeField] float idleFrameSpeed = 0.2f;
     [SerializeField] List<Sprite> runSprites = new();
     [SerializeField] List<Sprite> idleSprites = new();
-    [SerializeField] List<Sprite> jumpSprites = new();
+    [SerializeField] Sprite flyIdleSprite;
+    [SerializeField] Sprite flyRunSprite;
 
     int frameIndex = 0;
     float lastTime = 0;
@@ -85,6 +87,19 @@ public class Player : MonoBehaviour
     public Breaker veichle;
     public ToolInteract toolInteract;
     public bool hasEnergy { get { return jumpEnergy > 0.05; } }
+    public bool isRunning { get { return runSprites.Contains(rrenderer.sprite); } }
+
+    public void SaveData(SavePlayer data)
+    {
+        data.position = transform.position;
+        data.health = health;
+    }
+
+    public void LoadData(SavePlayer data)
+    {
+        transform.position = data.position;
+        health = data.health;
+    }
 
     public bool CanGoOffVeichle()
     {
@@ -101,7 +116,6 @@ public class Player : MonoBehaviour
         jumpEnergy -= amount;
         if (jumpEnergy <= 0) jumpEnergy = 0;
         jetpackSlider.value = jumpEnergy;
-
     }
 
     public void SpecialStatsChange(Slot bodySlot)
@@ -221,7 +235,7 @@ public class Player : MonoBehaviour
         }
         horizontalMove = Input.GetAxis("Horizontal") * speed;
         //if (tools.isSelecting){horizontalMove = 0;}
-        // RUN
+        // TEMP RUN
         if (Input.GetKey(KeyCode.LeftShift))
         {
             horizontalMove *= runMultiplier;
@@ -297,6 +311,15 @@ public class Player : MonoBehaviour
                 }
                 rrenderer.sprite = currentSprites[frameIndex];
             }
+        } else
+        {
+            if (horizontalMove != 0)
+            {
+                rrenderer.sprite = flyRunSprite;
+            } else
+            {
+                rrenderer.sprite = flyIdleSprite;
+            }
         }
         // OXYGEN AND HEALTH
         if (health < maxHealth){
@@ -315,7 +338,11 @@ public class Player : MonoBehaviour
         {
             horizontalMove *= breakerSpeedMul;
         }
-
+        // UI TOGGLE
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            UIObject.SetActive(!UIObject.activeSelf);
+        }
     }
 
     void ChangeStatus(Status status)
@@ -334,11 +361,10 @@ public class Player : MonoBehaviour
             currentFrameCount = idleSprites.Count;
             currentFrameSpeed = idleFrameSpeed;
         }
-        else if (status == Status.Jumping)
+        else
         {
-            currentSprites = jumpSprites;
-            currentFrameCount = jumpSprites.Count;
-            currentFrameSpeed = 1;
+            currentFrameCount = 0;
+            currentFrameSpeed = 0;
         }
     }
 

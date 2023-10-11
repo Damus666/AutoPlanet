@@ -13,8 +13,23 @@ public class Laboratory : Building
     UnlockManager unlockManager;
     float startTime;
 
-    public Item itemProcessing;
-    public int amount;
+    public InternalSlot storage = new();
+
+    public override SaveBuilding SaveData()
+    {
+        SaveBuilding data = BaseSaveData();
+        data.storages.Add(new SaveSlot(storage));
+        return data;
+    }
+
+    public override void LoadData(SaveBuilding data, SaveManager manager)
+    {
+        BaseLoadData(data);
+        storage = data.storages[0].ToSlot(manager);
+        startTime = Time.time;
+        if (storage.item != null)
+            Invoke(nameof(Process), storage.item.processTime);
+    }
 
     public override void BuildingDestroyed(Inventory inventory)
     {
@@ -22,7 +37,7 @@ public class Laboratory : Building
         {
             inventory.Close();
         }
-        inventory.DropMultiple(itemProcessing, amount, transform.position);
+        inventory.DropMultiple(storage, transform.position);
     }
 
     public override void FinishInit()
@@ -54,28 +69,28 @@ public class Laboratory : Building
 
     public override bool CanPutResource(Item item, string ID = "")
     {
-        return itemProcessing == null || (itemProcessing.ID == item.ID && amount <= itemProcessing.stackSize) || amount == 0;
+        return storage.item == null || (storage.item.ID == item.ID && storage.amount <= storage.item.stackSize) || storage.amount == 0;
     }
 
     public override int PutResource(Item item, int amount, string ID = "")
     {
-        itemProcessing = item;
-        this.amount += amount;
-        if (this.amount <= itemProcessing.stackSize)
+        storage.item = item;
+        storage.amount += amount;
+        if (storage.amount <= storage.item.stackSize)
         {
             if (lInt.isOpen && lInt.currentLab == this)
             {
-                lInt.inputSlot.SetItem(item, this.amount);
+                lInt.inputSlot.SetItem(item, storage.amount);
             }
             return 0;
         }
         else
         {
-            int temp = this.amount - itemProcessing.stackSize;
-            this.amount = itemProcessing.stackSize;
+            int temp = storage.amount - storage.item.stackSize;
+            storage.amount = storage.item.stackSize;
             if (lInt.isOpen && lInt.currentLab == this)
             {
-                lInt.inputSlot.SetItem(item, this.amount);
+                lInt.inputSlot.SetItem(item, storage.amount);
             }
             return temp;
         }
@@ -88,14 +103,14 @@ public class Laboratory : Building
 
     void Process()
     {
-        if (amount <= 0 || !hasEnergy)
+        if (storage.amount <= 0 || !hasEnergy)
         {
             spriteRenderer.sprite = offSprite;
             thisLight.enabled = false;
             itemShower.gameObject.SetActive(false);
             itemShowerShadow.gameObject.SetActive(false);
         }
-        unlockManager.Sell(itemProcessing.experience);
+        unlockManager.Sell(storage.item.experience);
         if (lInt.isOpen && lInt.currentLab == this)
         {
             lInt.progressSlider.value = 0;
@@ -107,32 +122,32 @@ public class Laboratory : Building
     {
         if (lInt.isOpen && lInt.currentLab == this)
         {
-            if (lInt.inputSlot.item != itemProcessing)
+            if (lInt.inputSlot.item != storage.item)
             {
                 if (lInt.inputSlot.item != null)
                 {
-                    itemProcessing = lInt.inputSlot.item;
-                    amount = lInt.inputSlot.amount;
+                    storage.item = lInt.inputSlot.item;
+                    storage.amount = lInt.inputSlot.amount;
 
                 }
             }
-            else if (lInt.inputSlot.amount != amount)
+            else if (lInt.inputSlot.amount != storage.amount)
             {
-                amount = lInt.inputSlot.amount;
+                storage.amount = lInt.inputSlot.amount;
             }
             if (isWorking)
             {
                 //x:1=(Time.time-startTime):nextFinalResult.craftTime
-                float x = (Time.time - startTime) / itemProcessing.processTime;
+                float x = (Time.time - startTime) / storage.item.processTime;
                 lInt.progressSlider.value = x;
             }
         }
-        if ( amount > 0 && !isWorking && hasEnergy)
+        if ( storage.amount > 0 && !isWorking && hasEnergy)
         {
-            amount--;
+            storage.amount--;
             if (lInt.isOpen && lInt.currentLab == this)
             {
-                lInt.inputSlot.amount = amount;
+                lInt.inputSlot.amount = storage.amount;
                 lInt.inputSlot.RefreshGraphics();
             }
             isWorking = true;
@@ -140,10 +155,10 @@ public class Laboratory : Building
             thisLight.enabled = true;
             itemShower.gameObject.SetActive(true);
             itemShowerShadow.gameObject.SetActive(true);
-            itemShower.sprite = itemProcessing.texture;
-            itemShowerShadow.sprite = itemProcessing.texture;
+            itemShower.sprite = storage.item.texture;
+            itemShowerShadow.sprite = storage.item.texture;
             startTime = Time.time;
-            Invoke(nameof(Process), itemProcessing.processTime);
+            Invoke(nameof(Process), storage.item.processTime);
         }
         else
         {

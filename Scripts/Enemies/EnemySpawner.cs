@@ -32,6 +32,8 @@ public class EnemySpawner : MonoBehaviour
     public bool isOff;
     public List<Enemy> children = new();
 
+    public float Health { get { return health; } }
+
     private void OnDestroy()
     {
         try
@@ -40,10 +42,15 @@ public class EnemySpawner : MonoBehaviour
         } catch { }
     }
 
+    public void SetHealth(float health)
+    {
+        this.health = health;
+        RefreshDescription();
+    }
+
     public void Damage(float amount)
     {
         health -= amount;
-        healthSlider.value = health;
         lastDamage = Time.time;
         RefreshDescription();
         foreach (Enemy enemy in children)
@@ -59,6 +66,7 @@ public class EnemySpawner : MonoBehaviour
     void RefreshDescription()
     {
         infoData.description = $"{baseDescription}\nHealth: {(int)health}/{maxHealth}";
+        healthSlider.value = health;
     }
 
     void Die()

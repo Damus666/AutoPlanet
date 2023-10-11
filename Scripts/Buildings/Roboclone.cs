@@ -47,6 +47,22 @@ public class Roboclone : Building
     public string botID;
     public InternalSlot storage = new();
 
+    public override SaveBuilding SaveData()
+    {
+        SaveBuilding data = BaseSaveData();
+        data.storages.Add(new SaveSlot(storage));
+        data.strVar = botID;
+        return data;
+    }
+
+    public override void LoadData(SaveBuilding data, SaveManager manager)
+    {
+        BaseLoadData(data);
+        storage = data.storages[0].ToSlot(manager);
+        botID = data.strVar;
+        CHECKPOINTCHANGE();
+    }
+
     public override void BuildingDestroyed(Inventory inventory)
     {
         if (rbInt.isOpen && rbInt.currentBot == this)

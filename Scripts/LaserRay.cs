@@ -7,14 +7,17 @@ public class LaserRay : MonoBehaviour
     [SerializeField] float damage;
     [SerializeField] bool isFromPlayer;
     [SerializeField] float damageCooldown = 0.2f;
+    [SerializeField] LaserAmmoManager ammoManager;
     BoxCollider2D bCollider;
     float lastDamage;
+    int count;
 
-    public void Setup(float damage, bool isFromPlayer, float damageCooldown)
+    public void Setup(float damage, bool isFromPlayer, float damageCooldown, LaserAmmoManager ammoManager)
     {
         this.damage = damage;
         this.isFromPlayer = isFromPlayer;
         this.damageCooldown = damageCooldown;
+        this.ammoManager = ammoManager;
     }
 
     private void Awake()
@@ -25,7 +28,12 @@ public class LaserRay : MonoBehaviour
     private void Update()
     {
         if (Time.time - lastDamage < damageCooldown) return;
+        if (ammoManager.laserInAmmoAmount <= 0 ) return;
         lastDamage = Time.time;
+        if (count % 6 == 0)
+            ammoManager.ConsumeLaser();
+        count++;
+        
 
         RaycastHit2D[] hits = new RaycastHit2D[32];
         bCollider.Cast(new Vector2(), hits);
@@ -36,21 +44,22 @@ public class LaserRay : MonoBehaviour
         }
     }
 
-    private void CheckOther(Collider2D other)
+    private bool CheckOther(Collider2D other)
     {
         if (other.gameObject.TryGetComponent(out Player player))
         {
             if (!isFromPlayer)
             {
                 player.Damage(damage);
+                return true;
             }
         }
         else if (other.gameObject.TryGetComponent(out Enemy enemy))
         {
             if (isFromPlayer)
             {
-                print("bruh");
                 enemy.Damage(damage);
+                return true;
             }
         }
         else if (other.gameObject.TryGetComponent(out EnemySpawner spawner))
@@ -58,7 +67,9 @@ public class LaserRay : MonoBehaviour
             if (isFromPlayer)
             {
                 spawner.Damage(damage);
+                return true;
             }
         }
+        return false;
     }
 }

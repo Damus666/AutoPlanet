@@ -16,22 +16,24 @@ MonoBehaviour:
   ID: 11
   description: Obtained mining the planet stone
   texture: {fileID: 21300000, guid: 4fa964d5921275f4c8669ae9598ff057, type: 3}
-  stackSize: 200
   isBuilding: 0
   buildingData:
     targetInterface: 0
-    destroyVegetation: 1
     buildingScale: 1
+    destroyVegetation: 1
     doGetData: 1
     needElectricity: 1
     canInteract: 1
   carftType: 4
   craftTime: 0
-  smeltedVersion: {fileID: 11400000, guid: aab7fef023637514f83caf2d44e14788, type: 2}
+  smeltedVersion: {fileID: 0}
   requirements: []
   craftAmount: 0
-  specialID: -1
-  specialLevel: 0
+  stackSize: 200
   startsUnlocked: 1
   experience: 15
   processTime: 0.1
+  halfScaleDrop: 0
+  maxHealth: 0
+  specialID: -1
+  specialLevel: 0

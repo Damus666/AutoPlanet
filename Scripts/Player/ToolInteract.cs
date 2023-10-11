@@ -41,6 +41,7 @@ public class ToolInteract : MonoBehaviour
     bool miningBlock;
     GameObject mineObject;
     float mineStartTime;
+    List<GameObject> minedTiles = new();
 
     [SerializeField] int decorationToolIdx = 1;
     [SerializeField] int tileToolIdx = 0;
@@ -312,6 +313,24 @@ public class ToolInteract : MonoBehaviour
         sRenderer.color = deadTileColor;
         sRenderer.sortingOrder = 3;
         bCollider.enabled = false;
+        minedTiles.Add(tile);
+    }
+
+    public void SaveData(SaveData data)
+    {
+        foreach (GameObject obj in minedTiles)
+        {
+            data.saveMinedBlocks.Add(new SaveIntPos
+            {
+                x = (int)obj.transform.position.x,
+                y = (int)obj.transform.position.y
+            });
+        }
+    }
+
+    public void RegisterMinedTile(GameObject tile)
+    {
+        minedTiles.Add(tile);
     }
 
     void StopMining()

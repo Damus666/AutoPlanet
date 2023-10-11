@@ -18,11 +18,11 @@ public class FurnaceInterface : Interface
     public void OnOpen(Furnace furnace)
     {
         currentFurnace = furnace;
-        inputSlot.item = furnace.itemSmelting;
-        inputSlot.amount = furnace.amount;
+        inputSlot.item = furnace.smeltingStorage.item;
+        inputSlot.amount = furnace.smeltingStorage.amount;
         inputSlot.RefreshGraphics();
-        outputSlot.item = furnace.outputItem;
-        outputSlot.amount = furnace.outputAmount;
+        outputSlot.item = furnace.outputStorage.item;
+        outputSlot.amount = furnace.outputStorage.amount;
         outputSlot.RefreshGraphics();
         progressSlider.value = 0;
         foreach (Checkpoint check in currentFurnace.checkpoints)

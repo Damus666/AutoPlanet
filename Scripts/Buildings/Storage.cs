@@ -7,6 +7,27 @@ public class Storage : Building
     public List<InternalSlot> internalSlots=new();
     StorageInterface sInt;
 
+    public override SaveBuilding SaveData()
+    {
+        SaveBuilding data = BaseSaveData();
+        foreach (InternalSlot slot in internalSlots)
+        {
+            if (slot.isEmpty) continue;
+            data.storages.Add(new SaveSlot(slot));
+        }
+        return data;
+    }
+
+    public override void LoadData(SaveBuilding data, SaveManager manager)
+    {
+        BaseLoadData(data);
+        foreach (SaveSlot slot in data.storages)
+        {
+            if (slot.isEmpty) return;
+            PutResource(manager.GetItemFromID(slot.itemID), slot.amount);
+        }
+    }
+
     public override void BuildingDestroyed(Inventory inventory)
     {
         if (sInt.isOpen && sInt.currentStorage == this)

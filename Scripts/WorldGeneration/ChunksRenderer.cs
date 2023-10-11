@@ -15,6 +15,7 @@ public class ChunksRenderer : MonoBehaviour
         StartCoroutine(waitfordeload());
 
     }
+
     IEnumerator waitfordeload(){
         yield return new WaitForSeconds(RefreshTime);
         for (int i = 0; i < ObjectsPooled.Count; i++)

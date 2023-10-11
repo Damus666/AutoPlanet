@@ -25,6 +25,11 @@ public class ChunksGenerator : MonoBehaviour
     private Hashtable tileobjs = new Hashtable();
     private Vector3 StartPosition;
 
+    public ICollection GetChunks()
+    {
+        return tileobjs.Values;
+    }
+
     void Start(){
         if(Player == null){
             Debug.LogError("No player assigned to the Map manager.");

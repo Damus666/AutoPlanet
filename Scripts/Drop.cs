@@ -8,6 +8,11 @@ public class Drop : MonoBehaviour
     SpriteRenderer spriteRenderer;
     Inventory inventory;
 
+    public SaveDrop SaveData()
+    {
+        return new SaveDrop(item, transform.position);
+    }
+
     public void Setup(Item item)
     {
         spriteRenderer = GetComponent<SpriteRenderer>();

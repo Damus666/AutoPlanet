@@ -6,7 +6,7 @@ using TMPro;
 
 public class UnlockNodeHolder : MonoBehaviour
 {
-    [SerializeField] UnlockNode nodeData;
+    [SerializeField] public UnlockNode nodeData;
     [SerializeField] TextMeshProUGUI nameTxt;
     [SerializeField] TextMeshProUGUI infoTxt;
     [SerializeField] Transform outputT;
@@ -28,6 +28,8 @@ public class UnlockNodeHolder : MonoBehaviour
     public bool isUnlocking = false;
     bool isDone = false;
     bool isHovering = false;
+
+    public Slider slider { get { return progressSlider; } }
 
     public void POINTERENTER()
     {
