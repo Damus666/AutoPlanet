@@ -6,7 +6,6 @@ public class Drop : MonoBehaviour
 {
     public Item item;
     SpriteRenderer spriteRenderer;
-    Inventory inventory;
 
     public SaveDrop SaveData()
     {
@@ -22,14 +21,13 @@ public class Drop : MonoBehaviour
         data.visualName = item.itemName + " (Drop)";
         data.description = item.description;
         data.texture = item.texture;
-        inventory = GameObject.Find("Player").GetComponent<Inventory>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if ((collision.gameObject.layer == 3 || collision.gameObject.layer == 10) && !collision.isTrigger)
         {
-            int remaining = inventory.AddItem(item, 1);
+            int remaining = Inventory.i.AddItem(item, 1);
             if (remaining == 0)
             {
                 Destroy(gameObject);
@@ -40,7 +38,7 @@ public class Drop : MonoBehaviour
     {
         if ((collision.gameObject.layer == 3 || collision.gameObject.layer == 10) && !collision.isTrigger)
         {
-            int remaining = inventory.AddItem(item, 1);
+            int remaining = Inventory.i.AddItem(item, 1);
             if (remaining == 0)
             {
                 Destroy(gameObject);

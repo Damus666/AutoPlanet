@@ -23,7 +23,6 @@ public class UnlockNodeHolder : MonoBehaviour
     [SerializeField] Color isResearchingColor;
     [SerializeField] List<Image> lines=new();
 
-    UnlockManager unlockManager;
     bool canUnlock = false;
     public bool isUnlocking = false;
     bool isDone = false;
@@ -57,7 +56,6 @@ public class UnlockNodeHolder : MonoBehaviour
             newImg.GetComponent<Image>().sprite = item.texture;
         }
         progressSlider.maxValue = nodeData.unlockTime;
-        unlockManager = GameObject.Find("Player").GetComponent<UnlockManager>();
     }
 
     public void IsDone()
@@ -73,7 +71,7 @@ public class UnlockNodeHolder : MonoBehaviour
 
     public void ONCLICK()
     {
-        unlockManager.UnlockNode(nodeData, progressSlider,this);
+        UnlockManager.i.UnlockNode(nodeData, progressSlider,this);
     }
 
     void UpdateOutline()
@@ -87,7 +85,7 @@ public class UnlockNodeHolder : MonoBehaviour
             }
             if (canUnlock)
             {
-                if (unlockManager.isResearching)
+                if (UnlockManager.i.isResearching)
                 {
                     outlineImage.color = isResearchingColor;
                     return;
@@ -102,7 +100,7 @@ public class UnlockNodeHolder : MonoBehaviour
 
     private void Update()
     {
-        canUnlock = unlockManager.CanUnlock(nodeData);
+        canUnlock = UnlockManager.i.CanUnlock(nodeData);
         UpdateOutline();
     }
 }

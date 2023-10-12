@@ -6,19 +6,18 @@ using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour
 {
-    
+    public static Inventory i;
+
     [SerializeField] GameObject inventoryInterface;
     [SerializeField] GameObject otherInterfaces;
     [SerializeField] GameObject unlockInterface;
     [SerializeField] GameObject dropPrefab;
 
-    [SerializeField] StateManager stateManager;
     [SerializeField] CreateSlots slotCreator;
-    [SerializeField] Tools tools;
-    [SerializeField] Player player;
     [SerializeField] PetManager petManager;
-    [SerializeField] UFNS ufns;
-    [SerializeField] SaveManager saveManager;
+    [SerializeField] PauseMenu pauseMenu;
+    [SerializeField] AllItems allItems;
+    [SerializeField] StateManager stateManager;
 
     [SerializeField] Interface craftingInterface;
     [SerializeField] Interface unlockI;
@@ -27,7 +26,6 @@ public class Inventory : MonoBehaviour
 
     [SerializeField] AudioSource clickSound;
     [SerializeField] Camera mainCamera;
-    [SerializeField] List<Item> testItems;
     
     UnlockManager unlockManager;
     RectTransform rectT;
@@ -53,43 +51,48 @@ public class Inventory : MonoBehaviour
         Clear();
         if (!data.bodySlot.isEmpty)
         {
-            bodySlot.SetItem(saveManager.GetItemFromID(data.bodySlot.itemID), data.bodySlot.amount);
+            bodySlot.SetItem(SaveManager.i.GetItemFromID(data.bodySlot.itemID), data.bodySlot.amount);
         }
         if (!data.petSlot.isEmpty)
         {
-            petSlot.SetItem(saveManager.GetItemFromID(data.petSlot.itemID), data.petSlot.amount);
+            petSlot.SetItem(SaveManager.i.GetItemFromID(data.petSlot.itemID), data.petSlot.amount);
         }
         foreach (SaveSlot slot in data.inventorySlots)
         {
-            AddItem(saveManager.GetItemFromID(slot.itemID), slot.amount);
+            AddItem(SaveManager.i.GetItemFromID(slot.itemID), slot.amount);
         }
         foreach (SaveDrop drop in drops)
         {
-            SpawnDrop(saveManager.GetItemFromID(drop.itemID), drop.position);
+            SpawnDrop(SaveManager.i.GetItemFromID(drop.itemID), drop.position);
         }
         SpecialSlotsChange();
     }
 
     private void Awake()
     {
+        i = this;
         unlockManager = GetComponent<UnlockManager>();
         rectT = inventoryInterface.GetComponent<RectTransform>();
         rectTUnlock = unlockInterface.GetComponent<RectTransform>();
         slotCreator.Init();
         Close();
-        foreach (Item testItem in testItems)
+        if (PlayerPrefs.GetInt("TEMPaddAllItemsStart", 0) == 1)
         {
-            if (testItem.stackSize != 1) { 
-                AddItem(testItem, 10);
-            } else
+            foreach (Item testItem in allItems.items)
             {
-                AddItem(testItem, 1);
+                if (testItem.stackSize != 1)
+                {
+                    AddItem(testItem, 10);
+                }
+                else
+                {
+                    AddItem(testItem, 1);
+                }
             }
         }
         bodySlot.slotContentChanged.AddListener(new UnityAction(SpecialSlotsChange));
         petSlot.slotContentChanged.AddListener(new UnityAction(SpecialSlotsChange));
-        var allitems = stateManager.gameObject.GetComponent<AllItems>().items;
-        foreach (Item item in allitems)
+        foreach (Item item in allItems.items)
         {
             if (item.startsUnlocked)
             {
@@ -150,22 +153,22 @@ public class Inventory : MonoBehaviour
 
     public void Open(Interface i = null)
     {
-        if (stateManager.inventoryOpen)
+        if (StateManager.i.inventoryOpen)
         {
             Close();
         }
         else
         {
-            if (tools.isSelecting)
+            if (Tools.i.isSelecting)
             {
-                tools.SelectTool(tools.toolIndex);
+                Tools.i.SelectTool(Tools.i.toolIndex);
             }
             else
             {
                 clickSound.Play();
             }
         }
-        stateManager.inventoryOpen = true;
+        StateManager.i.inventoryOpen = true;
         if (i==null || i.type != InterfaceType.Unlock)
         {
             inventoryInterface.SetActive(true);
@@ -176,15 +179,15 @@ public class Inventory : MonoBehaviour
         }
         if (i != null)
         {
-            stateManager.SetInterface(i);
+            StateManager.i.SetInterface(i);
             i.OpenInternal();
         } else
         {
-            
-            stateManager.SetInterface(craftingInterface);
+
+            StateManager.i.SetInterface(craftingInterface);
             craftingInterface.OpenInternal();
-            
         }
+        pauseMenu.Close();
     }
 
     public void Close()
@@ -220,7 +223,7 @@ public class Inventory : MonoBehaviour
 
     void SpecialSlotsChange()
     {
-        player.SpecialStatsChange(bodySlot);
+        Player.i.SpecialStatsChange(bodySlot);
         petManager.OnPetSlotChange(petSlot);
     }
 
@@ -272,7 +275,8 @@ public class Inventory : MonoBehaviour
                         int remaining = slot.AddAmount(toStore);
                         if (remaining == 0)
                         {
-                            ufns.SpawnInvNotif(item, amount);
+                            if (UFNS.i)
+                                UFNS.i.SpawnInvNotif(item, amount, InvNotifType.Add);
                             return 0;
                         }
                         toStore = remaining;
@@ -291,14 +295,16 @@ public class Inventory : MonoBehaviour
                     slot.RefreshGraphics();
                     if (remaining == 0)
                     {
-                        ufns.SpawnInvNotif(item, amount);
+                        if (UFNS.i)
+                            UFNS.i.SpawnInvNotif(item, amount, InvNotifType.Add);
                         return 0;
                     }
                     toStore = remaining;
                 }
             }
         }
-        ufns.SpawnInvNotif(item, amount - toStore);
+        if (UFNS.i)
+            UFNS.i.SpawnInvNotif(item, amount - toStore, InvNotifType.Add);
         return toStore;
     }
 
@@ -314,24 +320,24 @@ public class Inventory : MonoBehaviour
                     int remaining = slot.RemoveAmount(toRemove);
                     if (remaining == 0)
                     {
-                        ufns.SpawnInvNotif(item, amount,"remove");
+                        UFNS.i.SpawnInvNotif(item, amount, InvNotifType.Remove);
                         return 0;
                     }
                     toRemove = remaining;
                 }
             }
         }
-        ufns.SpawnInvNotif(item, amount-toRemove,"remove");
+        UFNS.i.SpawnInvNotif(item, amount-toRemove, InvNotifType.Remove);
         return toRemove;
     }
 
     private void Update()
     {
         Vector2 localMousePosition = rectT.InverseTransformPoint(Input.mousePosition);
-        if (rectT.rect.Contains(localMousePosition) && stateManager.inventoryOpen)
+        if (rectT.rect.Contains(localMousePosition) && StateManager.i.inventoryOpen)
         {
             isMouseHovering = true;
-        } else if (stateManager.inventoryOpen && stateManager.currentInterface != null && stateManager.currentInterface.type == InterfaceType.Unlock && rectTUnlock.rect.Contains(localMousePosition))
+        } else if (StateManager.i.inventoryOpen && StateManager.i.currentInterface != null && StateManager.i.currentInterface.type == InterfaceType.Unlock && rectTUnlock.rect.Contains(localMousePosition))
         {
             isMouseHovering = true;
         } else
@@ -340,7 +346,7 @@ public class Inventory : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (stateManager.inventoryOpen)
+            if (StateManager.i.inventoryOpen)
             {
                 Close();
             } else
@@ -349,7 +355,7 @@ public class Inventory : MonoBehaviour
             }
         } else if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (stateManager.inventoryOpen)
+            if (StateManager.i.inventoryOpen)
             {
                 Close();
             }
@@ -360,7 +366,7 @@ public class Inventory : MonoBehaviour
             {
                 if (Input.GetKeyDown(KeyCode.Z))
                 {
-                    ufns.SpawnInvNotif(floatingSlot.item, 1,"drop");
+                    UFNS.i.SpawnInvNotif(floatingSlot.item, 1, InvNotifType.Drop);
                     floatingSlot.amount--;
                     floatingSlot.RefreshText();
                     if (floatingSlot.amount <= 0)

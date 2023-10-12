@@ -9,7 +9,14 @@ public class SaveIntPos
     public int y;
 }
 
-    [System.Serializable]
+[System.Serializable]
+public class SaveOre
+{
+    public SaveIntPos pos;
+    public int amount;
+}
+
+[System.Serializable]
 public class SaveData
 {
     public int seed;
@@ -18,4 +25,5 @@ public class SaveData
     public List<SaveBuilding> saveBuildings = new();
     public List<SaveDrop> saveDrops = new();
     public List<SaveIntPos> saveMinedBlocks = new();
+    public List<SaveOre> saveOres = new();
 }

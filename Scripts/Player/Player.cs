@@ -14,6 +14,7 @@ enum Status
 
 public class Player : MonoBehaviour
 {
+    public static Player i;
     [SerializeField] Transform mainCamera;
     [SerializeField] CinemachineVirtualCamera cineCamera;
     [SerializeField] GameObject deathOverlay;
@@ -31,10 +32,7 @@ public class Player : MonoBehaviour
     [SerializeField] AudioSource bgMusic;
     [SerializeField] AudioSource gameOverSound;
     [SerializeField] AudioSource jetpackSound;
-
-    [SerializeField] Constants constants;
-    [SerializeField] public Tools tools;
-    [SerializeField] public AudioSource hitSound;
+    [SerializeField] AudioSource hitSound;
 
     CharacterController2D cc;
     Rigidbody2D rb;
@@ -45,7 +43,6 @@ public class Player : MonoBehaviour
     [SerializeField] float zoomMin=5;
     [SerializeField] float distanceFromCameraX;
     [SerializeField] float distanceFromCameraY;
-    [SerializeField] float camFollowSpeed=8;
     [SerializeField] float speed;
     [SerializeField] float breakerSpeedMul = 0.2f;
     [SerializeField] float runMultiplier = 1.5f;
@@ -85,7 +82,6 @@ public class Player : MonoBehaviour
     [Header("---")]
     public bool hasVeichle = false;
     public Breaker veichle;
-    public ToolInteract toolInteract;
     public bool hasEnergy { get { return jumpEnergy > 0.05; } }
     public bool isRunning { get { return runSprites.Contains(rrenderer.sprite); } }
 
@@ -122,24 +118,24 @@ public class Player : MonoBehaviour
     {
         if (! bodySlot.isEmpty)
         {
-            if (bodySlot.item.specialID == constants.bodyPartsIDs.x)
+            if (bodySlot.item.specialID == Constants.i.bodyPartsIDs.x)
             {
-                maxHealth = bodySlot.item.specialLevel == 0 ? constants.stats1Maxes.x : constants.stats2Maxes.x;
+                maxHealth = bodySlot.item.specialLevel == 0 ? Constants.i.stats1Maxes.x : Constants.i.stats2Maxes.x;
             } else
             {
-                maxHealth = constants.stats0Maxes.x;
+                maxHealth = Constants.i.stats0Maxes.x;
             }
-            if (bodySlot.item.specialID == constants.bodyPartsIDs.z)
+            if (bodySlot.item.specialID == Constants.i.bodyPartsIDs.z)
             {
-                maxJumpEnergy = bodySlot.item.specialLevel == 0 ? constants.stats1Maxes.z : constants.stats2Maxes.z;
+                maxJumpEnergy = bodySlot.item.specialLevel == 0 ? Constants.i.stats1Maxes.z : Constants.i.stats2Maxes.z;
             }
             else
             {
-                maxJumpEnergy = constants.stats0Maxes.z;
+                maxJumpEnergy = Constants.i.stats0Maxes.z;
             }
         } else
         {
-            maxJumpEnergy = constants.stats0Maxes.z;
+            maxJumpEnergy = Constants.i.stats0Maxes.z;
         }
         RefreshSliders();
     }
@@ -150,8 +146,9 @@ public class Player : MonoBehaviour
         jetpackSlider.maxValue = maxJumpEnergy;
     }
 
-    private void Start()
+    private void Awake()
     {
+        i = this;
         cc = GetComponent<CharacterController2D>();
         rb = GetComponent<Rigidbody2D>();
         rrenderer = GetComponent<SpriteRenderer>();
@@ -205,24 +202,6 @@ public class Player : MonoBehaviour
     {
         // MOEVEMENT
         posTxt.text = $"X: {(int)transform.position.x}, Y: {(int)transform.position.y}";
-        /*
-        if (Mathf.Abs(transform.position.x-mainCamera.position.x) > actualCam.orthographicSize*distanceFromCameraX)
-        {
-            float sign = Mathf.Sign(transform.position.x-mainCamera.position.x);
-            mainCamera.position = new Vector3(transform.position.x-distanceFromCameraX* actualCam.orthographicSize * sign,mainCamera.position.y,mainCamera.position.z);
-        }
-        if (Mathf.Abs(transform.position.y-mainCamera.position.y) > distanceFromCameraY* actualCam.orthographicSize)
-        {
-            float sign = Mathf.Sign(transform.position.y-mainCamera.position.y);
-            mainCamera.position = new Vector3(mainCamera.position.x,transform.position.y-distanceFromCameraY* actualCam.orthographicSize*sign, mainCamera.position.z);
-        }
-        
-        float deltaTime = Time.deltaTime;
-        mainCamera.transform.position = new Vector3(
-            Mathf.Lerp(mainCamera.transform.position.x,transform.position.x,deltaTime*camFollowSpeed),
-            Mathf.Lerp(mainCamera.transform.position.y,transform.position.y,deltaTime*camFollowSpeed),
-            mainCamera.transform.position.z);
-        */
         float deltaTime = Time.deltaTime;
         cineCamera.m_Lens.OrthographicSize -= Input.mouseScrollDelta.y * zoomSpeed;
         if (cineCamera.m_Lens.OrthographicSize > zoomMax)
@@ -256,7 +235,7 @@ public class Player : MonoBehaviour
             }
         }
         // JUMP
-        if (Input.GetButton("Jump") && jumpEnergy > 0)
+        if (Input.GetButton("Jump") && jumpEnergy > 0 && !StateManager.i.paused)
         {
             if (!hasVeichle || cc.grounded)
             {

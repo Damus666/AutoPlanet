@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum EnemyType
 {
@@ -17,6 +18,7 @@ public enum EnemyStatus
 
 public class Enemy : MonoBehaviour
 {
+    [SerializeField] Slider healthSlider;
     [SerializeField] ParticleSystem bloodParticles;
     [SerializeField] Transform thrusterParticles;
     [SerializeField] float direction;
@@ -28,10 +30,8 @@ public class Enemy : MonoBehaviour
     SpriteRenderer spriteRenderer;
     Transform attackTarget;
     Transform playerT;
-
     InfoData infoData;
     EnemySpawner spawner;
-    AudioSource hitSound;
 
     Vector3 normalScale;
     Vector3 facingLeftScale;
@@ -67,7 +67,6 @@ public class Enemy : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = enemyData.sprite;
         health = enemyData.health;
-        hitSound = GameObject.Find("Player").GetComponent<Player>().hitSound;
         normalScale = transform.localScale;
         facingLeftScale = new Vector3(-normalScale.x,normalScale.y,1);
         if (Random.Range(0, 100) < 50)
@@ -89,11 +88,22 @@ public class Enemy : MonoBehaviour
         } catch { }
     }
 
+    void UpdateHealthBar()
+    {
+        if (!healthSlider) return;
+        healthSlider.maxValue = enemyData.health;
+        healthSlider.value = health;
+        if (health >= enemyData.health)
+            healthSlider.gameObject.SetActive(false);
+        else
+            healthSlider.gameObject.SetActive(true);
+    }
+
     public void Damage(float amount)
     {
         health -= amount;
         bloodParticles.Play();
-        hitSound.Play();
+        SoundManager.i.hitSound.Play();
         RefreshDescription();
         if (health <= 0)
         {
@@ -104,6 +114,7 @@ public class Enemy : MonoBehaviour
     void RefreshDescription()
     {
         infoData.description = $"{baseDescription}\nHealth: {(int)health}/{enemyData.health}";
+        UpdateHealthBar();
     }
 
     void Die()
@@ -113,7 +124,8 @@ public class Enemy : MonoBehaviour
         canAttack = false;
         dead = true;
         if (Random.Range(0,100) < enemyData.dropChance)
-            playerT.GetComponent<Inventory>().DropMultiple(enemyData.dropItem, enemyData.dropAmount, transform.position);
+            Inventory.i.DropMultiple(enemyData.dropItem, enemyData.dropAmount, transform.position);
+        Destroy(healthSlider.gameObject);
         Destroy(thrusterParticles.gameObject);
         Destroy(GetComponent<CircleCollider2D>());
         Destroy(gameObject,1);

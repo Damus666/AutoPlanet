@@ -35,7 +35,7 @@ public class CraftingInterface : Interface
                 foreach (Item item in subcategory.items)
                 {
                     GameObject newSlot = Instantiate(craftingSlotPrefab, newSubCategory.transform);
-                    newSlot.GetComponent<CraftingSlot>().Setup(item,inventory, queue);
+                    newSlot.GetComponent<CraftingSlot>().Setup(item, queue);
                     slots.Add(newSlot.GetComponent<CraftingSlot>());
                 }
             }

@@ -8,8 +8,6 @@ public class FloatingSlot : MonoBehaviour
 {
     [SerializeField] Image image;
     [SerializeField] TextMeshProUGUI amountTxt;
-    [SerializeField] Inventory inventory;
-    [SerializeField] BuildingManager buildingManager;
 
     public Item item;
     public int amount;
@@ -27,7 +25,7 @@ public class FloatingSlot : MonoBehaviour
                 NoFloatNoMore();
             } else
             {
-                inventory.AddItem(item, amount);
+                Inventory.i.AddItem(item, amount);
                 NoFloatNoMore();
             }
         }
@@ -50,7 +48,7 @@ public class FloatingSlot : MonoBehaviour
         image.sprite = item.texture;
         amountTxt.text = amount.ToString();
         isFloating = true;
-        buildingManager.OnSlotChange();
+        BuildingManager.i.OnSlotChange();
     }
 
     public void RefreshText()
@@ -67,11 +65,11 @@ public class FloatingSlot : MonoBehaviour
     {
         gameObject.SetActive(false);
         isFloating = false;
-        buildingManager.OnSlotChange();
+        BuildingManager.i.OnSlotChange();
     }
 
     public void RefreshBuildingManager()
     {
-        buildingManager.OnSlotChange();
+        BuildingManager.i.OnSlotChange();
     }
 }

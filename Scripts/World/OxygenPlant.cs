@@ -6,8 +6,6 @@ public class OxygenPlant : MonoBehaviour
 {
     [SerializeField] ParticleSystem particles;
     public bool isActive = true;
-    [SerializeField] float refilAmount = 30f;
-    [SerializeField] float waitTime=60;
     EnergySource energySource;
 
     void Awake(){

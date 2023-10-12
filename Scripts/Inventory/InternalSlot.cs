@@ -54,9 +54,9 @@ public class InternalSlot
         amount = slot.amount;
     }
 
-    public void Set(SaveSlot slot, SaveManager manager)
+    public void Set(SaveSlot slot)
     {
-        item = manager.GetItemFromID(slot.isEmpty ? -1 : slot.itemID);
+        item = SaveManager.i.GetItemFromID(slot.isEmpty ? -1 : slot.itemID);
         amount = slot.amount;
     }
 

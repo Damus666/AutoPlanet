@@ -21,7 +21,6 @@ public class LaserAmmoManager : MonoBehaviour
     [SerializeField] Color hoveredOutlineColor = Color.white;
     [SerializeField] Image outlineRenderer;
     [SerializeField] Slider amountSlider;
-    [SerializeField] InfoBoxManager boxManager;
     public bool isEmpty
     {
         get
@@ -54,7 +53,7 @@ public class LaserAmmoManager : MonoBehaviour
     {
         if (isHovering)
         {
-            boxManager.SetFromItem(laserAmmoItem,laserAmmoAmount);
+            InfoBoxManager.i.SetFromItem(laserAmmoItem,laserAmmoAmount);
         }
     }
 

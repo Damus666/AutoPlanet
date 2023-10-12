@@ -5,7 +5,6 @@ using UnityEngine;
 public class CreateSlots : MonoBehaviour
 {
     [SerializeField] GameObject slotPrefab;
-    [SerializeField] Inventory inventory;
     [SerializeField] int slotAmout;
 
     public void Init()
@@ -15,7 +14,7 @@ public class CreateSlots : MonoBehaviour
             GameObject newSlot = Instantiate(slotPrefab,transform);
             Slot s = newSlot.GetComponent<Slot>();
             s.ID = i;
-            inventory.AddSlot(s);
+            Inventory.i.AddSlot(s);
         }
     }
 

@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class BuildingManager : MonoBehaviour
 {
+    public static BuildingManager i;
+
     [SerializeField] FloatingSlot floatingSlot;
     [SerializeField] UnlockInterface unlockInterface;
-    [SerializeField] Constants constants;
-    [SerializeField] SaveManager saveManager;
 
     [SerializeField] GameObject buildingPrefab;
     [SerializeField] Camera mainCamera;
@@ -16,18 +16,23 @@ public class BuildingManager : MonoBehaviour
     GameObject currentBuilding;
     float lastPlace;
 
+    private void Awake()
+    {
+        i = this;
+    }
+
     public void LoadData(List<SaveBuilding> buildings)
     {
         foreach (SaveBuilding data in buildings)
         {
-            Item buildingItem = saveManager.GetItemFromID(data.itemID);
+            Item buildingItem = SaveManager.i.GetItemFromID(data.itemID);
             CreateBuilding(buildingItem);
             currentBuilding.transform.position = data.position;
             Building building = PlaceBuilding(buildingItem);
-            building.LoadData(data, saveManager);
+            building.LoadData(data);
             currentBuilding = null;
         }
-        constants.onNewBuildingEvent.Invoke();
+        Constants.i.onNewBuildingEvent.Invoke();
     }
 
     public void OnSlotChange()
@@ -82,88 +87,88 @@ public class BuildingManager : MonoBehaviour
             case InterfaceType.Furnace:
                 var compfurnace = currentBuilding.AddComponent<Furnace>();
                 compfurnace.referenceItem = buildingData;
-                compfurnace.SetConstants(constants);
-                compfurnace.SetInterface(constants.furnaceInterface);
+                compfurnace.PreSetup();
+                compfurnace.SetInterface(Constants.i.furnaceInterface);
                 compfurnace.FinishInit();
                 break;
             case InterfaceType.Miner:
                 var compminer = currentBuilding.AddComponent<Miner>();
                 compminer.referenceItem = buildingData;
-                compminer.SetConstants(constants);
-                compminer.SetInterface(constants.minerInterface);
+                compminer.PreSetup();
+                compminer.SetInterface(Constants.i.minerInterface);
                 compminer.FinishInit();
                 break;
             case InterfaceType.Crafter:
                 var compcrafter = currentBuilding.AddComponent<Crafter>();
                 compcrafter.referenceItem = buildingData;
-                compcrafter.SetConstants(constants);
-                compcrafter.SetInterface(constants.crafterInterface);
+                compcrafter.PreSetup();
+                compcrafter.SetInterface(Constants.i.crafterInterface);
                 compcrafter.FinishInit();
                 break;
             case InterfaceType.Storage:
                 var compstorage = currentBuilding.AddComponent<Storage>();
                 compstorage.referenceItem = buildingData;
-                compstorage.SetConstants(constants,false);
-                compstorage.SetInterface(constants.storageInterface);
+                compstorage.PreSetup(false);
+                compstorage.SetInterface(Constants.i.storageInterface);
                 compstorage.FinishInit();
                 break;
             case InterfaceType.Lasergun:
                 var compgun = currentBuilding.AddComponent<LaserGun>();
                 compgun.referenceItem = buildingData;
-                compgun.SetConstants(constants);
-                compgun.SetInterface(constants.lasergunInterface);
+                compgun.PreSetup();
+                compgun.SetInterface(Constants.i.lasergunInterface);
                 compgun.FinishInit();
                 break;
             case InterfaceType.Roboclone:
                 var comprobo = currentBuilding.AddComponent<Roboclone>();
                 comprobo.referenceItem = buildingData;
-                comprobo.SetConstants(constants);
-                comprobo.SetInterface(constants.robocloneInterface);
+                comprobo.PreSetup();
+                comprobo.SetInterface(Constants.i.robocloneInterface);
                 comprobo.FinishInit();
                 break;
             case InterfaceType.OxygenSource:
                 var compens = currentBuilding.AddComponent<EnergySource>();
-                constants.energySources.Add(compens);
+                Constants.i.energySources.Add(compens);
                 compens.referenceItem = buildingData;
-                compens.SetConstants(constants,false);
+                compens.PreSetup(false);
                 compens.FinishInit();
                 break;
             case InterfaceType.OxygenDistributor:
                 var compend = currentBuilding.AddComponent<EnergyDistributor>();
-                constants.energyDistributors.Add(compend);
+                Constants.i.energyDistributors.Add(compend);
                 compend.referenceItem = buildingData;
-                compend.SetConstants(constants);
+                compend.PreSetup();
                 compend.FinishInit();
                 break;
             case InterfaceType.Block:
                 var compblock = currentBuilding.AddComponent<Building>();
                 compblock.referenceItem = buildingData;
-                compblock.SetConstants(constants,false);
+                compblock.PreSetup(false);
                 break;
             case InterfaceType.Lamp:
                 var complamp = currentBuilding.AddComponent<Lamp>();
                 complamp.referenceItem = buildingData;
-                complamp.SetConstants(constants);
+                complamp.PreSetup();
                 complamp.FinishInit();
                 break;
             case InterfaceType.Breaker:
                 var compbreak = currentBuilding.AddComponent<Breaker>();
                 compbreak.referenceItem = buildingData;
-                compbreak.SetConstants(constants);
+                compbreak.PreSetup();
                 compbreak.FinishInit();
                 break;
             case InterfaceType.Unlock:
                 var compunlock = currentBuilding.AddComponent<Computer>();
                 compunlock.referenceItem = buildingData;
                 compunlock.SetInterface(unlockInterface);
-                compunlock.SetConstants(constants);
+                compunlock.PreSetup(Constants.i);
                 compunlock.FinishInit();
                 break;
             case InterfaceType.Laboratory:
                 var complab = currentBuilding.AddComponent<Laboratory>();
                 complab.referenceItem = buildingData;
-                complab.SetConstants(constants);
-                complab.SetInterface(constants.laboratoryInterface);
+                complab.PreSetup();
+                complab.SetInterface(Constants.i.laboratoryInterface);
                 complab.FinishInit();
                 break;
             case InterfaceType.Generic:
@@ -183,12 +188,12 @@ public class BuildingManager : MonoBehaviour
         {
             OnSlotChange();
         }
-        foreach (EnergyDistributor dist in constants.energyDistributors)
+        foreach (EnergyDistributor dist in Constants.i.energyDistributors)
         {
             dist.CheckEnergy();
         }
         if (item == null)
-            constants.onNewBuildingEvent.Invoke();
+            Constants.i.onNewBuildingEvent.Invoke();
         return buildingComp;
     }
 

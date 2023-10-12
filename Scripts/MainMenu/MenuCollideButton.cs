@@ -7,9 +7,9 @@ public class MenuCollideButton : MonoBehaviour
 {
     public UnityEvent onClickEvent;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!collision.CompareTag("Player")) return;
+        if (!collision.gameObject.CompareTag("Player")) return;
         onClickEvent.Invoke();
     }
 }

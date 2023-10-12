@@ -22,12 +22,12 @@ public class Furnace : Building
         return data;
     }
 
-    public override void LoadData(SaveBuilding data, SaveManager manager)
+    public override void LoadData(SaveBuilding data)
     {
         BaseLoadData(data);
-        smeltingStorage = data.storages[0].ToSlot(manager);
-        outputStorage = data.storages[1].ToSlot(manager);
-        nextFinalResult = manager.GetItemFromID(data.storages[2].itemID);
+        smeltingStorage = data.storages[0].ToSlot();
+        outputStorage = data.storages[1].ToSlot();
+        nextFinalResult = SaveManager.i.GetItemFromID(data.storages[2].itemID);
         startTime = Time.time;
         if (nextFinalResult != null)
         {
@@ -38,14 +38,14 @@ public class Furnace : Building
         }
     }
 
-    public override void BuildingDestroyed(Inventory inventory)
+    public override void BuildingDestroyed()
     {
         if (fInt.isOpen && fInt.currentFurnace == this)
         {
-            inventory.Close();
+            Inventory.i.Close();
         }
-        inventory.DropMultiple(smeltingStorage, transform.position);
-        inventory.DropMultiple(outputStorage, transform.position);
+        Inventory.i.DropMultiple(smeltingStorage, transform.position);
+        Inventory.i.DropMultiple(outputStorage, transform.position);
     }
 
     public override void FinishInit()

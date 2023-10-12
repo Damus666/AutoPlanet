@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class HoverOutlineEffect : MonoBehaviour
 {
-    [SerializeField] Color normalColor;
-    [SerializeField] Color hoverColor;
+    [SerializeField] Color normalColor = new Color(0.4f, 0.4f, 0.4f, 1.0f);
+    [SerializeField] Color hoverColor = Color.white;
     [SerializeField] Image outline;
     public bool canChangeColor = true;
 

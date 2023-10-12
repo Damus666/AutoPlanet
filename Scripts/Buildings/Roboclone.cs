@@ -55,21 +55,21 @@ public class Roboclone : Building
         return data;
     }
 
-    public override void LoadData(SaveBuilding data, SaveManager manager)
+    public override void LoadData(SaveBuilding data)
     {
         BaseLoadData(data);
-        storage = data.storages[0].ToSlot(manager);
+        storage = data.storages[0].ToSlot();
         botID = data.strVar;
         CHECKPOINTCHANGE();
     }
 
-    public override void BuildingDestroyed(Inventory inventory)
+    public override void BuildingDestroyed()
     {
         if (rbInt.isOpen && rbInt.currentBot == this)
         {
-            inventory.Close();
+            Inventory.i.Close();
         }
-        inventory.DropMultiple(storage, transform.position);
+        Inventory.i.DropMultiple(storage, transform.position);
     }
 
     public override void FinishInit()

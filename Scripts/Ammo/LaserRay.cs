@@ -30,7 +30,7 @@ public class LaserRay : MonoBehaviour
         if (Time.time - lastDamage < damageCooldown) return;
         if (ammoManager.laserInAmmoAmount <= 0 ) return;
         lastDamage = Time.time;
-        if (count % 6 == 0)
+        if (count % 4 == 0)
             ammoManager.ConsumeLaser();
         count++;
         

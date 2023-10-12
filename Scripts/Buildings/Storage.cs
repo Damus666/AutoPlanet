@@ -18,23 +18,23 @@ public class Storage : Building
         return data;
     }
 
-    public override void LoadData(SaveBuilding data, SaveManager manager)
+    public override void LoadData(SaveBuilding data)
     {
         BaseLoadData(data);
         foreach (SaveSlot slot in data.storages)
         {
             if (slot.isEmpty) return;
-            PutResource(manager.GetItemFromID(slot.itemID), slot.amount);
+            PutResource(SaveManager.i.GetItemFromID(slot.itemID), slot.amount);
         }
     }
 
-    public override void BuildingDestroyed(Inventory inventory)
+    public override void BuildingDestroyed()
     {
         if (sInt.isOpen && sInt.currentStorage == this)
         {
-            inventory.Close();
+            Inventory.i.Close();
         }
-        inventory.DropSlots(internalSlots, transform.position);
+        Inventory.i.DropSlots(internalSlots, transform.position);
     }
 
     public override void FinishInit()

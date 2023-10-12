@@ -8,6 +8,7 @@ public class MenuPlayer : MonoBehaviour
     [SerializeField] Transform mainCamera;
     [SerializeField] CinemachineVirtualCamera cineCamera;
     [SerializeField] CanvasGroup helperTxt;
+    [SerializeField] MenuActions menuActions;
 
     [SerializeField] ParticleSystem jetpackParticles;
     [SerializeField] ParticleSystem smokeParticles;
@@ -60,7 +61,8 @@ public class MenuPlayer : MonoBehaviour
     {
         // MOEVEMENT
         float deltaTime = Time.deltaTime;
-        cineCamera.m_Lens.OrthographicSize -= Input.mouseScrollDelta.y * zoomSpeed;
+        if (!menuActions.menuOpen)
+            cineCamera.m_Lens.OrthographicSize -= Input.mouseScrollDelta.y * zoomSpeed;
         if (cineCamera.m_Lens.OrthographicSize > zoomMax)
         {
             cineCamera.m_Lens.OrthographicSize = zoomMax;
@@ -70,6 +72,15 @@ public class MenuPlayer : MonoBehaviour
             cineCamera.m_Lens.OrthographicSize = zoomMin;
         }
         horizontalMove = Input.GetAxis("Horizontal") * speed;
+        // MENU
+        if (menuActions.menuOpen)
+        {
+            horizontalMove = 0;
+            jump = false;
+            wasjumping = false;
+            if (status != Status.Idle)
+                ChangeStatus(Status.Idle);
+        }
         // CHANGE STATUS RUN-IDLE
         if (horizontalMove != 0)
         {
@@ -86,7 +97,7 @@ public class MenuPlayer : MonoBehaviour
             }
         }
         // JUMP
-        if (Input.GetButton("Jump"))
+        if (Input.GetButton("Jump") && !menuActions.menuOpen)
         {
             jump = true;
             if (!jetpackSound.isPlaying)

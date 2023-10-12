@@ -30,13 +30,13 @@ public class Crafter : Building
         return data;
     }
 
-    public override void LoadData(SaveBuilding data, SaveManager manager)
+    public override void LoadData(SaveBuilding data)
     {
         BaseLoadData(data);
-        selectedItem = manager.GetItemFromID(data.storages[0].itemID);
-        output = data.storages[1].ToSlot(manager);
+        selectedItem = SaveManager.i.GetItemFromID(data.storages[0].itemID);
+        output = data.storages[1].ToSlot();
         for (int i= 2; i < storages.Count; i++) {
-            storages[i - 2].Set(data.storages[i], manager);
+            storages[i - 2].Set(data.storages[i]);
         }
         if (selectedItem)
         {
@@ -44,14 +44,14 @@ public class Crafter : Building
         }
     }
 
-    public override void BuildingDestroyed(Inventory inventory)
+    public override void BuildingDestroyed()
     {
         if (cInt.isOpen && cInt.currentCrafter == this)
         {
-            inventory.Close();
+            Inventory.i.Close();
         }
-        inventory.DropSlots(storages, transform.position);
-        inventory.DropMultiple(output, transform.position);
+        Inventory.i.DropSlots(storages, transform.position);
+        Inventory.i.DropMultiple(output, transform.position);
     }
 
     public void InputChange()

@@ -4,11 +4,8 @@ using UnityEngine;
 
 public class ToolInteract : MonoBehaviour
 {
-    [SerializeField] Inventory inventory;
-    [SerializeField] Tools tools;
+    public static ToolInteract i;
     [SerializeField] Camera mainCamera;
-    [SerializeField] Player player;
-    [SerializeField] Constants constants;
 
     [SerializeField] public Color deadTileColor;
     [SerializeField] float mineTime = 0.5f;
@@ -39,9 +36,11 @@ public class ToolInteract : MonoBehaviour
     bool mining;
     bool miningTile;
     bool miningBlock;
+    bool isMiddleClick;
     GameObject mineObject;
     float mineStartTime;
     List<GameObject> minedTiles = new();
+    List<Ore> changedOres = new();
 
     [SerializeField] int decorationToolIdx = 1;
     [SerializeField] int tileToolIdx = 0;
@@ -54,32 +53,48 @@ public class ToolInteract : MonoBehaviour
     [SerializeField] int shootButton = 0;
     [SerializeField] int attackButton = 0;
     [SerializeField] int buildingMineButton = 1;
+    [SerializeField] int oreDestroyButton = 2;
 
-    private void Start()
+    private void Awake()
     {
+        i = this;
         animSpeed = (1.0f / sprites.Count) * animSpeedMul;
     }
 
     void Update()
     {
         // SHOOT
-        if (tools.toolIndex == shootToolIdx && Input.GetMouseButtonDown(shootButton) && !inventory.isMouseHovering && !inventory.floatingSlot.isFloating && ammoManager.laserInAmmoAmount > 0)
+        if (Tools.i.toolIndex == shootToolIdx && 
+            Input.GetMouseButtonDown(shootButton) && 
+            !Inventory.i.isMouseHovering && !Inventory.i.floatingSlot.isFloating && 
+            ammoManager.laserInAmmoAmount > 0 && 
+            !StateManager.i.paused)
         {
             Shoot();
         }
         // ATTACK
-        if (tools.toolIndex == swordToolIdx && Input.GetMouseButtonDown(attackButton) && !inventory.isMouseHovering && !inventory.floatingSlot.isFloating)
+        if (Tools.i.toolIndex == swordToolIdx && 
+            Input.GetMouseButtonDown(attackButton) && 
+            !Inventory.i.isMouseHovering && 
+            !Inventory.i.floatingSlot.isFloating && 
+            !StateManager.i.paused)
         {
             Attack();
         }
         // RAY
-        if (tools.toolIndex == rayToolIdx && Input.GetMouseButton(shootButton) && !inventory.isMouseHovering && !inventory.floatingSlot.isFloating
+        if (Tools.i.toolIndex == rayToolIdx && 
+            Input.GetMouseButton(shootButton) && 
+            !Inventory.i.isMouseHovering && 
+            !Inventory.i.floatingSlot.isFloating && 
+            !StateManager.i.paused
             && !ammoManager.isEmpty)
             UpdateRay();
         else
             DisableRay();
         // MINING
-        if ((Input.GetMouseButton(mineButton) || Input.GetMouseButton(buildingMineButton)) && !inventory.isMouseHovering)
+        isMiddleClick = Input.GetMouseButton(oreDestroyButton);
+        if ((Input.GetMouseButton(mineButton) || Input.GetMouseButton(buildingMineButton) || isMiddleClick) 
+            && !Inventory.i.isMouseHovering && !StateManager.i.paused)
         {
             if (mining && mineObject != null)
             {
@@ -135,7 +150,6 @@ public class ToolInteract : MonoBehaviour
     {
         rayLight.enabled = true;
         if (!rayObj.activeSelf) rayObj.SetActive(true);
-        // remove ammo
     }
 
     void Shoot()
@@ -174,17 +188,17 @@ public class ToolInteract : MonoBehaviour
         {
             if (hit.collider.isTrigger)
             {
-                if (tools.toolIndex != decorationToolIdx) return; 
+                if (Tools.i.toolIndex != decorationToolIdx) return; 
                 if (hit.collider.GetComponent<EnemySpawner>()) return;
             } else
             {
-                if (tools.toolIndex != tileToolIdx) return;
+                if (Tools.i.toolIndex != tileToolIdx) return;
                 miningTile = true;
             }
         }
         else if (hit.collider.gameObject.TryGetComponent(out Building building) && isBuilding)
         {
-            if (tools.toolIndex != tileToolIdx) return;
+            if (Tools.i.toolIndex != tileToolIdx) return;
             if (building.referenceItem.buildingData.targetInterface == InterfaceType.Block)
             {
                 miningBlock = true;
@@ -213,8 +227,9 @@ public class ToolInteract : MonoBehaviour
         }
         if (miningTile)
         {
-            DisableTile(mineObject);
-            DropFromInfoData(mineObject);
+            bool disabled = DisableTile(mineObject, false);
+            if (disabled)
+                DropFromInfoData(mineObject);
         } else
         {
             if (mineObject.CompareTag("building"))
@@ -248,7 +263,7 @@ public class ToolInteract : MonoBehaviour
     {
         if (building.TryGetComponent(out Breaker breaker))
         {
-            if (player.hasVeichle && player.veichle == breaker)
+            if (Player.i.hasVeichle && Player.i.veichle == breaker)
             {
                 return false;
             }
@@ -257,33 +272,33 @@ public class ToolInteract : MonoBehaviour
         Building buildingComp = building.GetComponent<Building>();
         if (buildingComp.DropSelf())
         {
-            inventory.SpawnDrop(buildingComp.referenceItem, building.transform.position);
+            Inventory.i.SpawnDrop(buildingComp.referenceItem, building.transform.position);
         }
-        buildingComp.BuildingDestroyed(inventory);
-        constants.onBuildingDestroyEvent.Invoke();
+        buildingComp.BuildingDestroyed();
+        Constants.i.onBuildingDestroyEvent.Invoke();
         return true;
     }
 
     void Repair()
     {
-        if (tools.toolIndex != repairToolIdx) return;
+        if (Tools.i.toolIndex != repairToolIdx) return;
         RaycastHit2D hit = ObjectRaycast();
         if (hit.collider == null) return;
         if (Vector3.Distance(transform.position, hit.collider.transform.position) > mineDistance) return;
         if (!hit.collider.gameObject.CompareTag("building")) return;
-        if (inventory.CountItem(repairItem) <= 0) return;
+        if (Inventory.i.CountItem(repairItem) <= 0) return;
         if (!hit.collider.gameObject.GetComponent<BuildingRuntime>().isPlaced) return;
 
         Building building = hit.collider.gameObject.GetComponent<Building>();
         if (!building.CanRepair()) return;
-        
-        inventory.RemoveItem(repairItem, 1);
+
+        Inventory.i.RemoveItem(repairItem, 1);
         building.Repair(repairAmount);
     }
 
     void DropFromInfoData(GameObject obj)
     {
-        inventory.SpawnDrop(obj.GetComponent<InfoData>().data.onDropItem, obj.transform.position);
+        Inventory.i.SpawnDrop(obj.GetComponent<InfoData>().data.onDropItem, obj.transform.position);
     }
 
     void DestroyThingOnTop(GameObject tile)
@@ -306,14 +321,22 @@ public class ToolInteract : MonoBehaviour
         }
     }
 
-    public void DisableTile(GameObject tile)
+    public bool DisableTile(GameObject tile, bool forceDisable)
     {
+        if (!forceDisable && isMiddleClick && tile.TryGetComponent(out Ore ore))
+        {
+            ore.Mine();
+            Inventory.i.AddItem(ore.dropItem, 1);
+            if (ore.amount > 0)
+                return false;
+        }
         SpriteRenderer sRenderer = tile.GetComponent<SpriteRenderer>();
         BoxCollider2D bCollider = tile.GetComponent<BoxCollider2D>();
         sRenderer.color = deadTileColor;
         sRenderer.sortingOrder = 3;
         bCollider.enabled = false;
         minedTiles.Add(tile);
+        return true;
     }
 
     public void SaveData(SaveData data)
@@ -326,11 +349,28 @@ public class ToolInteract : MonoBehaviour
                 y = (int)obj.transform.position.y
             });
         }
+        foreach (Ore ore in changedOres)
+        {
+            data.saveOres.Add(new SaveOre
+            {
+                pos = new SaveIntPos
+                {
+                    x = (int)ore.transform.position.x,
+                    y = (int)ore.transform.position.y
+                },
+                amount = ore.amount
+            });
+        }
     }
 
     public void RegisterMinedTile(GameObject tile)
     {
         minedTiles.Add(tile);
+    }
+
+    public void RegisterChangedOre(Ore ore)
+    {
+        changedOres.Add(ore);
     }
 
     void StopMining()
@@ -343,9 +383,10 @@ public class ToolInteract : MonoBehaviour
         if (animRenderer.gameObject.activeSelf) animRenderer.gameObject.SetActive(false);
     }
 
-    public void DestroyTile(GameObject tile)
+    public void DestroyTile(GameObject tile, bool forceDisable)
     {
-        DisableTile(tile);
+        bool disabled = DisableTile(tile, forceDisable);
+        if (!disabled) return;
         DropFromInfoData(tile);
         DestroyThingOnTop(tile);
     }

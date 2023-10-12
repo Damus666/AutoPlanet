@@ -6,11 +6,9 @@ using TMPro;
 
 public class UnlockManager : MonoBehaviour
 {
-    [SerializeField] StateManager stateManager;
+    public static UnlockManager i;
     [SerializeField] GameObject unlockIContent;
     [SerializeField] TextMeshProUGUI infoTxt;
-    [SerializeField] UFNS ufns;
-    Inventory inventory;
 
     public List<int> unlockedIDs = new List<int>();
     public List<UnlockNodeHolder> unlockBtns = new();
@@ -101,7 +99,7 @@ public class UnlockManager : MonoBehaviour
             researchPoints += 1;
             XP = 0;
             nextLevelXP =(int)(nextLevelXP*XPMultiplier);
-            ufns.SpawnNotif("Research Points", "1 more point is available in the research");
+            UFNS.i.SpawnNotif("Research Points", "1 more point is available in the research");
         }
         RefreshInfo();
     }
@@ -114,7 +112,7 @@ public class UnlockManager : MonoBehaviour
 
     private void Awake()
     {
-        inventory = GetComponent<Inventory>();
+        i = this;
         unlockBtns = new(unlockIContent.GetComponentsInChildren<UnlockNodeHolder>());
         RefreshInfo();
     }
@@ -143,7 +141,7 @@ public class UnlockManager : MonoBehaviour
                 startUnlockTime = Time.time;
                 isResearching = true;
                 holder.isUnlocking = true;
-                ufns.SpawnNotif("Research Started", $"Started Researching: {node.nodeName}");
+                UFNS.i.SpawnNotif("Research Started", $"Started Researching: {node.nodeName}");
                 Invoke(nameof(FinishUnlocking), node.unlockTime);
             }
         }
@@ -160,7 +158,7 @@ public class UnlockManager : MonoBehaviour
         unlockSlider.value = unlockSlider.maxValue;
         nodeHolder.IsDone();
         nodeHolder.isUnlocking = false;
-        ufns.SpawnNotif("Research Completed", $"Finished Researching: {nextUnlockNode.nodeName}");
+        UFNS.i.SpawnNotif("Research Completed", $"Finished Researching: {nextUnlockNode.nodeName}");
         nodeHolder = null;
         nextUnlockNode = null;
         unlockSlider = null;
@@ -170,7 +168,7 @@ public class UnlockManager : MonoBehaviour
 
     private void Update()
     {
-        if (stateManager.inventoryOpen && nextUnlockNode != null)
+        if (StateManager.i.inventoryOpen && nextUnlockNode != null)
         {
             unlockSlider.value = Time.time - startUnlockTime;
         }

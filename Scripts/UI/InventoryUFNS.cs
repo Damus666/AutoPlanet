@@ -10,32 +10,33 @@ public class InventoryUFNS : BaseUFNS
     [SerializeField] TextMeshProUGUI amountTxt;
     public int amount;
     public int ID;
-    public string type;
+    public InvNotifType type;
     public string sign;
 
     protected override void AboutToDestroy()
     {
-        ufns.RemoveInvUFNS(this);
+        UFNS.i.RemoveInvUFNS(this);
     }
 
-    public void Setup(Item item,int amount,string type)
+    public void Setup(Item item,int amount, InvNotifType type)
     {
         this.type = type;
         ID = item.ID;
         this.amount = amount;
         itemImg.sprite = item.texture;
         sign = "+";
-        if (type == "remove" || type == "drop")
+        if (type == InvNotifType.Remove || type == InvNotifType.Drop)
         {
             sign = "-";
         }
         amountTxt.text = $"{sign} {amount}";
-        if (type == "add")
+        if (type == InvNotifType.Add)
         {
             amountTxt.color = Color.green;
-        } else if(type == "remove"){
+        } else if(type == InvNotifType.Remove)
+        {
             amountTxt.color = Color.red;
-        } else if (type == "drop")
+        } else if (type == InvNotifType.Drop)
         {
             amountTxt.color = new Color(255, 200, 0, 1);
         }

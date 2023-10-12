@@ -27,18 +27,17 @@ public class Interface : MonoBehaviour
     public InterfaceType type = InterfaceType.Generic;
     public string title;
     public bool isOpen;
-    public Inventory inventory;
-    public Constants constants;
     [SerializeField] TextMeshProUGUI titleTxt;
+    protected Constants constants;
 
     private void Awake()
     {
-        inventory = GameObject.Find("Player").GetComponent<Inventory>();
+        constants = Constants.i;
     }
 
     public void Open()
     {
-        inventory.Open(this);
+        Inventory.i.Open(this);
     }
 
     public void OpenInternal()

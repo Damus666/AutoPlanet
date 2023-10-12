@@ -20,7 +20,7 @@ public class CrafterInterface : Interface
     [SerializeField] TMP_InputField outputField;
 
     [SerializeField] HoverOutlineEffect itemSelectedEffect;
-    [SerializeField] AllItems allItemsHolder;
+    [SerializeField] AllItems allItems;
     [SerializeField] bool isSelecting;
 
     System.Func<TMP_InputField, bool> checkCondition;
@@ -33,7 +33,7 @@ public class CrafterInterface : Interface
     private void Awake()
     {
         checkCondition = new(CheckCondition);
-        foreach (Item item in allItemsHolder.items)
+        foreach (Item item in allItems.items)
         {
             if (item.carftType == CraftType.OnlyCrafter || item.carftType == CraftType.HandsAndCrafter)
             {

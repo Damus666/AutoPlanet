@@ -12,10 +12,7 @@ public class CraftingSlot : MonoBehaviour
     [SerializeField] Color cannorCraftColorHovered = Color.red;
     [SerializeField] Image outline;
 
-    InfoBoxManager infoBoxManager;
-    Inventory inventory;
     CraftingQueue queue;
-    UnlockManager unlockManager;
 
     bool isHovering;
     bool canCraft;
@@ -23,22 +20,19 @@ public class CraftingSlot : MonoBehaviour
     bool isUnlocked = true;
     public Item item;
 
-    public void Setup(Item item, Inventory inv, CraftingQueue queue)
+    public void Setup(Item item, CraftingQueue queue)
     {
-        infoBoxManager = GameObject.Find("GameManager").GetComponent<InfoBoxManager>();
         this.item = item;
         itemImage.sprite = item.texture;
-        inventory = inv;
         this.queue = queue;
-        unlockManager = inventory.GetComponent<UnlockManager>();
     }
 
     private void Update()
     {
         if (isHovering)
         {
-            infoBoxManager.SetFromItem(item);
-            infoBoxManager.SetFromCraftingInfo(item, craftError);
+            InfoBoxManager.i.SetFromItem(item);
+            InfoBoxManager.i.SetFromCraftingInfo(item, canCraft ? CraftStatus.CanCraft : CraftStatus.CannotCraft, craftError);
         }
         CheckCanCraft();
     }
@@ -67,7 +61,7 @@ public class CraftingSlot : MonoBehaviour
             queue.AddToQueue(item);
             foreach (Requirement req in item.requirements)
             {
-                inventory.RemoveItem(req.item, req.amount);
+                Inventory.i.RemoveItem(req.item, req.amount);
             }
             CheckCanCraft();
         }
@@ -75,7 +69,7 @@ public class CraftingSlot : MonoBehaviour
 
     public void CheckCanCraft()
     {
-        if (!unlockManager.unlockedIDs.Contains(item.ID))
+        if (!UnlockManager.i.unlockedIDs.Contains(item.ID))
         {
             canCraft = false;
             craftError = "Locked";
@@ -88,7 +82,7 @@ public class CraftingSlot : MonoBehaviour
         }
         if (item.carftType == CraftType.OnlyHands || item.carftType == CraftType.HandsAndCrafter)
         {
-            if (inventory.CheckRequirements(item.requirements))
+            if (Inventory.i.CheckRequirements(item.requirements))
             {
                 canCraft = true;
                 craftError = "Can craft";

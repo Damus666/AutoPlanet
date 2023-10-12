@@ -78,7 +78,7 @@ public class Building : MonoBehaviour
         constants.onCheckpointChange.Invoke();
     } 
 
-    public virtual void LoadData(SaveBuilding data, SaveManager manager)
+    public virtual void LoadData(SaveBuilding data)
     {
         BaseLoadData(data);
     }
@@ -103,12 +103,11 @@ public class Building : MonoBehaviour
 
     void Die()
     {
-        Inventory inv = GameObject.Find("Player").GetComponent<Inventory>();
         if (DropSelf())
         {
-            inv.SpawnDrop(referenceItem, transform.position);
+            Inventory.i.SpawnDrop(referenceItem, transform.position);
         }
-        BuildingDestroyed(inv);
+        BuildingDestroyed();
         Destroy(gameObject);
     }
 
@@ -251,7 +250,7 @@ public class Building : MonoBehaviour
 
     }
 
-    public void SetConstants(Constants constants,bool registerEvents=true)
+    public void PreSetup(bool registerEvents=true)
     {
         lineRenderer = GetComponent<LineRenderer>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -260,7 +259,7 @@ public class Building : MonoBehaviour
         healthSlider.maxValue = health;
         healthSlider.value = health;
         maxHealth = health;
-        this.constants = constants;
+        constants = Constants.i;
         if (registerEvents)
         {
             this.constants.onNewBuildingEvent.AddListener(new UnityAction(ONNEWBUILDING));
@@ -307,7 +306,7 @@ public class Building : MonoBehaviour
         return null;
     }
 
-    public virtual void BuildingDestroyed(Inventory inventory)
+    public virtual void BuildingDestroyed()
     {
 
     }

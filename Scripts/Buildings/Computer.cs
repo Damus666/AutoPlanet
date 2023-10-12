@@ -6,12 +6,10 @@ public class Computer : Building
 {
     Sprite offSprite;
     Sprite onSprite;
-    UnlockManager unlockManager;
 
     public override void FinishInit()
     {
         needElectricityToInteract = true;
-        unlockManager = GameObject.Find("Player").GetComponent<UnlockManager>();
         offSprite = spriteRenderer.sprite;
         onSprite = constants.computerOnSprite;
         AddLight();
@@ -36,7 +34,7 @@ public class Computer : Building
 
     private void Update()
     {
-        if (unlockManager.isResearching)
+        if (UnlockManager.i.isResearching)
         {
             if (!isWorking)
             {

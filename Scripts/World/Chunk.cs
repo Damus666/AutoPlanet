@@ -49,7 +49,6 @@ public class Chunk : MonoBehaviour
     int oreangle=0;
     public bool canDisable = false;
     EnemySpawner spawner;
-    SaveManager saveManager;
     SaveChunk saveChunk;
     int saveX;
     int saveY;
@@ -138,9 +137,8 @@ public class Chunk : MonoBehaviour
     {
         saveX = (int)transform.position.x;
         saveY = (int)transform.position.y;
-        seed = GameObject.Find("GameManager").GetComponent<Constants>().seed;
-        saveManager = GameObject.Find("SavingSystem").GetComponent<SaveManager>();
-        saveChunk = saveManager.GetChunkLoadedData(saveX, saveY);
+        seed = Constants.i.seed;
+        saveChunk = SaveManager.i.GetChunkLoadedData(saveX, saveY);
         if (saveChunk != null)
             isNew = false;
         StartCoroutine(GenerateChunk());
@@ -288,13 +286,13 @@ public class Chunk : MonoBehaviour
             CreateOxygenPlant(oxygenPlant.position);
 
         foreach (SaveDecoration decoration in data.decorations)
-            CreateDecoration(decoration.position, saveManager.GetWorldDataFromName(decoration.worldDataName));
+            CreateDecoration(decoration.position, SaveManager.i.GetWorldDataFromName(decoration.worldDataName));
 
         foreach (SaveCaveDecoration decoration in data.caveDecorations)
-            CreateCaveDecoration(decoration.position, saveManager.GetWorldDataFromName(decoration.worldDataName));
+            CreateCaveDecoration(decoration.position, SaveManager.i.GetWorldDataFromName(decoration.worldDataName));
 
         foreach (SaveBigDecoration decoration in data.bigDecorations)
-            CreateBigDecoration(decoration.position, saveManager.GetWorldDataFromName(decoration.worldDataName));
+            CreateBigDecoration(decoration.position, SaveManager.i.GetWorldDataFromName(decoration.worldDataName));
 
         foreach (SaveDust dust in data.dusts)
             CreateDust(dust.localPosition, dust.scale, dust.color);
@@ -422,7 +420,7 @@ public class Chunk : MonoBehaviour
         newTile.transform.position = new Vector3(realX + 0.5f, realY + 0.5f, 0);
         newTile.GetComponent<SpriteRenderer>().sprite = tileSelected.texture;
         newTile.GetComponent<InfoData>().Set(tileSelected);
-        if (!isAlive || saveManager.WasTileMined(newTile))
+        if (!isAlive || SaveManager.i.WasTileMined(newTile))
         {
             newTile.GetComponent<SpriteRenderer>().color = deadTileColor;
             newTile.GetComponent<BoxCollider2D>().enabled = false;

@@ -4,6 +4,12 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+public enum CraftStatus
+{
+    CanCraft,
+    CannotCraft
+}
+
 public class InfoBox : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI nameTxt;
@@ -18,7 +24,6 @@ public class InfoBox : MonoBehaviour
     [SerializeField] List<Image> craftingImages;
     [SerializeField] List<TextMeshProUGUI> craftingAmounts;
 
-    [SerializeField] Inventory inventory;
     [SerializeField] TextMeshProUGUI oreTxt;
     [SerializeField] TextMeshProUGUI buildingTxt;
 
@@ -98,10 +103,10 @@ public class InfoBox : MonoBehaviour
         }
     }
 
-    public void SetCrafting(Item item,string message)
+    public void SetCrafting(Item item, CraftStatus status, string message)
     {
         crafingMessage.text = message;
-        if (message == "Can craft")
+        if (status == CraftStatus.CanCraft)
         {
             crafingMessage.color = Color.green;
         } else
@@ -119,7 +124,7 @@ public class InfoBox : MonoBehaviour
             craftingImages[i].transform.parent.gameObject.SetActive(true);
             craftingImages[i].sprite = req.item.texture;
             craftingAmounts[i].text = "x "+req.amount;
-            if (inventory.CheckRequirement(req))
+            if (Inventory.i.CheckRequirement(req))
             {
                 craftingAmounts[i].color = Color.green;
             } else

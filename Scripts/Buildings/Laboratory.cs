@@ -10,7 +10,6 @@ public class Laboratory : Building
     SpriteRenderer itemShowerShadow;
 
     LaboratoryInterface lInt;
-    UnlockManager unlockManager;
     float startTime;
 
     public InternalSlot storage = new();
@@ -22,27 +21,26 @@ public class Laboratory : Building
         return data;
     }
 
-    public override void LoadData(SaveBuilding data, SaveManager manager)
+    public override void LoadData(SaveBuilding data)
     {
         BaseLoadData(data);
-        storage = data.storages[0].ToSlot(manager);
+        storage = data.storages[0].ToSlot();
         startTime = Time.time;
         if (storage.item != null)
             Invoke(nameof(Process), storage.item.processTime);
     }
 
-    public override void BuildingDestroyed(Inventory inventory)
+    public override void BuildingDestroyed()
     {
         if (lInt.isOpen && lInt.currentLab == this)
         {
-            inventory.Close();
+            Inventory.i.Close();
         }
-        inventory.DropMultiple(storage, transform.position);
+        Inventory.i.DropMultiple(storage, transform.position);
     }
 
     public override void FinishInit()
     {
-        unlockManager = GameObject.Find("Player").GetComponent<UnlockManager>();
         offSprite = spriteRenderer.sprite;
         onSprite = constants.labOnSprite;
         lInt = constants.laboratoryInterface;
@@ -110,7 +108,7 @@ public class Laboratory : Building
             itemShower.gameObject.SetActive(false);
             itemShowerShadow.gameObject.SetActive(false);
         }
-        unlockManager.Sell(storage.item.experience);
+        UnlockManager.i.Sell(storage.item.experience);
         if (lInt.isOpen && lInt.currentLab == this)
         {
             lInt.progressSlider.value = 0;

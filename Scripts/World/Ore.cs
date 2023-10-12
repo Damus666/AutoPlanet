@@ -8,6 +8,14 @@ public class Ore : MonoBehaviour
     public int amount;
     public float mineTime;
 
+    private void Awake()
+    {
+        SaveOre oreData = SaveManager.i.WasOreChanged(this);
+        if (oreData != null)
+            amount = oreData.amount;
+        
+    }
+
     public bool Mine()
     {
         amount--;

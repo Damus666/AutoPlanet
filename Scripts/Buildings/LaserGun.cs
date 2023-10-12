@@ -24,10 +24,10 @@ public class LaserGun : Building
         return data;
     }
 
-    public override void LoadData(SaveBuilding data, SaveManager manager)
+    public override void LoadData(SaveBuilding data)
     {
         BaseLoadData(data);
-        storage = data.storages[0].ToSlot(manager);
+        storage = data.storages[0].ToSlot();
         ammo = data.intVar;
     }
 
@@ -68,13 +68,13 @@ public class LaserGun : Building
         lInt.OnOpen(this);
     }
 
-    public override void BuildingDestroyed(Inventory inventory)
+    public override void BuildingDestroyed()
     {
         if (lInt.isOpen && lInt.currentGun == this)
         {
-            inventory.Close();
+            Inventory.i.Close();
         }
-        inventory.DropMultiple(storage, transform.position);
+        Inventory.i.DropMultiple(storage, transform.position);
     }
 
     public override bool CanPutResource(Item item, string ID = "")

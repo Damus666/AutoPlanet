@@ -16,14 +16,12 @@ public class BuildingRuntime : MonoBehaviour
     [SerializeField] LayerMask petLayer;
     [SerializeField] Collider2D thisCollider;
 
-    Inventory inventory;
     public bool isValid;
     public bool isPlaced;
 
     public void Setup(Sprite image, bool isEnergy)
     {
         this.image.sprite = image;
-        inventory = GameObject.Find("Player").GetComponent<Inventory>();
         if (!isEnergy)
         {
             Destroy(energyRangeIndicator);
@@ -43,7 +41,7 @@ public class BuildingRuntime : MonoBehaviour
                 {
                     if (hit.collider.gameObject.layer == 7)
                     {
-                        inventory.SpawnDrop(hit.collider.GetComponent<InfoData>().data.onDropItem, hit.collider.transform.position);
+                        Inventory.i.SpawnDrop(hit.collider.GetComponent<InfoData>().data.onDropItem, hit.collider.transform.position);
                         Destroy(hit.collider.gameObject);
                     }
                 }
@@ -96,7 +94,7 @@ public class BuildingRuntime : MonoBehaviour
             }
         }
         thisCollider.enabled = true;
-        if (atLeastOne || hasNoBlock || inventory.isMouseHovering)
+        if (atLeastOne || hasNoBlock || Inventory.i.isMouseHovering)
         {
             image.color = badColor;
             isValid = false;

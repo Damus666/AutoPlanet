@@ -5,9 +5,8 @@ using UnityEngine;
 public class ToolButton : MonoBehaviour
 {
     public int index;
-    [SerializeField] Tools tools;
 
     public void ONCLICK(){
-        tools.SelectTool(index);
+        Tools.i.SelectTool(index);
     }
 }

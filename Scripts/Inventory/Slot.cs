@@ -16,7 +16,6 @@ public class Slot : MonoBehaviour
     [SerializeField] Image outlineRenderer;
 
     FloatingSlot floatingSlot;
-    InfoBoxManager boxManager;
     bool isHovering;
 
     public Item item = null;
@@ -172,7 +171,7 @@ public class Slot : MonoBehaviour
         {
             if (!isEmpty)
             {
-                boxManager.SetFromItem(item,amount);
+                InfoBoxManager.i.SetFromItem(item,amount);
             }
         }
     }
@@ -190,7 +189,6 @@ public class Slot : MonoBehaviour
 
     private void Awake()
     {
-        boxManager = GameObject.Find("GameManager").GetComponent<InfoBoxManager>();
         floatingSlot = GameObject.Find("Player").GetComponent<Inventory>().floatingSlot;
         RefreshGraphics();
     }

@@ -6,17 +6,14 @@ using System.IO;
 
 public class SaveManager : MonoBehaviour
 {
-    [SerializeField] AllItems allItems;
+    public static SaveManager i;
+
     [SerializeField] Player player;
-    [SerializeField] Inventory inventory;
-    [SerializeField] UnlockManager unlockManager;
     [SerializeField] ChunksGenerator chunksGenerator;
-    [SerializeField] Constants constants;
-    [SerializeField] BuildingManager buildingManager;
-    [SerializeField] ToolInteract toolInteract;
     [SerializeField] GameObject loadingOverlay;
     [SerializeField] string jsonExtension = "json";
     [SerializeField] float loadTime = 4.0f;
+    [SerializeField] bool overridePlayerPrefs;
 
     bool started;
     public SaveData saveData;
@@ -27,6 +24,13 @@ public class SaveManager : MonoBehaviour
 
     private void Awake()
     {
+        i = this;
+        if (!overridePlayerPrefs)
+        {
+            worldName = PlayerPrefs.GetString("worldName", "NoWorldNameError");
+            isNewWorld = PlayerPrefs.GetInt("isNew", 1) == 1 ? true : false;
+        }
+
         fileName = Application.persistentDataPath + "/" + worldName + "." + jsonExtension;
         if (!isNewWorld)
             Load();
@@ -57,11 +61,11 @@ public class SaveManager : MonoBehaviour
 
     public void PutSaveData()
     {
-        saveData.seed = constants.seed;
+        saveData.seed = Constants.i.seed;
         player.SaveData(saveData.savePlayer);
-        inventory.SaveData(saveData.savePlayer);
-        unlockManager.SaveData(saveData.savePlayer);
-        toolInteract.SaveData(saveData);
+        Inventory.i.SaveData(saveData.savePlayer);
+        UnlockManager.i.SaveData(saveData.savePlayer);
+        ToolInteract.i.SaveData(saveData);
         foreach (GameObject chunkObj in chunksGenerator.GetChunks())
         {
             if (chunkObj.TryGetComponent(out Chunk chunk)) 
@@ -112,9 +116,9 @@ public class SaveManager : MonoBehaviour
 
     public void ApplyLoadData()
     {
-        inventory.LoadData(saveData.savePlayer, saveData.saveDrops);
-        unlockManager.LoadData(saveData.savePlayer);
-        buildingManager.LoadData(saveData.saveBuildings);
+        Inventory.i.LoadData(saveData.savePlayer, saveData.saveDrops);
+        UnlockManager.i.LoadData(saveData.savePlayer);
+        BuildingManager.i.LoadData(saveData.saveBuildings);
 
         print("DEBUG - APPLIED LOAD DATA");
     }
@@ -130,7 +134,7 @@ public class SaveManager : MonoBehaviour
 
     public Item GetItemFromID(int ID)
     {
-        foreach (Item item in allItems.items)
+        foreach (Item item in AllItems.i.items)
         {
             if (item.ID == ID) return item;
         }
@@ -139,7 +143,7 @@ public class SaveManager : MonoBehaviour
 
     public WorldObjectData GetWorldDataFromName(string name)
     {
-        foreach (WorldObjectData data in allItems.worldObjectDatas)
+        foreach (WorldObjectData data in AllItems.i.worldObjectDatas)
         {
             if (data.visualName == name) return data;
         }
@@ -152,10 +156,23 @@ public class SaveManager : MonoBehaviour
         {
             if (pos.x == (int)tile.transform.position.x && pos.y == (int)tile.transform.position.y)
             {
-                toolInteract.RegisterMinedTile(tile);
+                ToolInteract.i.RegisterMinedTile(tile);
                 return true;
             }
         }
         return false;
+    }
+
+    public SaveOre WasOreChanged(Ore ore)
+    {
+        foreach (SaveOre saveOre in saveData.saveOres)
+        {
+            if (saveOre.pos.x == (int)ore.transform.position.x && saveOre.pos.y == (int)ore.transform.position.y)
+            {
+                ToolInteract.i.RegisterChangedOre(ore);
+                return saveOre;
+            }
+        }
+        return null;
     }
 }

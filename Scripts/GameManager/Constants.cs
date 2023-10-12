@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 public class Constants : MonoBehaviour
 {
+    public static Constants i;
     public SaveManager saveManager;
     public int seed = 0;
 
@@ -67,8 +68,9 @@ public class Constants : MonoBehaviour
     public List<EnergySource> energySources=new();
     public List<EnergyDistributor> energyDistributors=new();
 
-    private void Start()
+    private void Awake()
     {
+        i = this;
         if (saveManager.isNewWorld)
             seed = Random.Range(-10000, 10000);
         else

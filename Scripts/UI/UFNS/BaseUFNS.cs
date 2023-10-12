@@ -10,7 +10,6 @@ public class BaseUFNS : MonoBehaviour
     [SerializeField] float disappearSpeed;
     [SerializeField] protected float waitTime;
 
-    protected UFNS ufns;
     protected bool canDisappear=false;
 
     public void ResetAlpha()
@@ -23,9 +22,8 @@ public class BaseUFNS : MonoBehaviour
         canDisappear = true;
     }
 
-    public void BaseSetup(UFNS ufns)
+    public void BaseSetup()
     {
-        this.ufns = ufns;
         Invoke(nameof(SetDisappear),waitTime);
     }
 

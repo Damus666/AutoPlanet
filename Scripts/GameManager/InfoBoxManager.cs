@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class InfoBoxManager : MonoBehaviour
 {
-    
+    public static InfoBoxManager i;
+
     [SerializeField] GameObject infoBoxDrop;
     [SerializeField] GameObject infoBoxCrafting;
     [SerializeField] GameObject infoBoxOre;
@@ -20,10 +21,6 @@ public class InfoBoxManager : MonoBehaviour
     [SerializeField] SpriteRenderer blockSelectionRenderer;
 
     [SerializeField] InfoBox infoBox;
-    [SerializeField] ToolInteract toolInteract;
-    [SerializeField] BuildingManager buildingManager;
-    [SerializeField] Tools tools;
-    [SerializeField] Inventory inventory;
     [SerializeField] LaserAmmoManager laserAmmoManager;
 
     bool wasActive;
@@ -31,14 +28,14 @@ public class InfoBoxManager : MonoBehaviour
 
     private void Update()
     {
-        if (inventory.isMouseHovering || laserAmmoManager.isHovering)
+        if (Inventory.i.isMouseHovering || laserAmmoManager.isHovering || StateManager.i.paused)
         {
             SetNotActive();
             SetNotActiveBlock();
             return;
         }
 
-        RaycastHit2D hit = toolInteract.ObjectRaycast();
+        RaycastHit2D hit = ToolInteract.i.ObjectRaycast();
         if (hit.collider == null)
         {
             SetNotActive();
@@ -64,12 +61,12 @@ public class InfoBoxManager : MonoBehaviour
             wasSelectionActive = true;
         }
         blockSelection.position = tile.transform.position;
-        if (Vector3.Distance(toolInteract.transform.position, tile.transform.position) > toolInteract.mineDistance)
+        if (Vector3.Distance(ToolInteract.i.transform.position, tile.transform.position) > ToolInteract.i.mineDistance)
             blockSelectionRenderer.color = farBlockSelectionColor;
         else
         {
             blockSelectionRenderer.color = normalBlockSelectionColor;
-            if ((tile.layer == 6 && tools.toolIndex != 0) || (tile.layer == 7 && tools.toolIndex != 1))
+            if ((tile.layer == 6 && Tools.i.toolIndex != 0) || (tile.layer == 7 && Tools.i.toolIndex != 1))
                 blockSelectionRenderer.color = farBlockSelectionColor;
         }
         if (infoBoxBuilding.activeSelf)
@@ -78,14 +75,14 @@ public class InfoBoxManager : MonoBehaviour
     }
     void UpdateBuilding(GameObject building)
     {
-        if (Vector3.Distance(buildingManager.transform.position, building.transform.position) > buildingManager.interactDistance)
+        if (Vector3.Distance(BuildingManager.i.transform.position, building.transform.position) > BuildingManager.i.interactDistance)
         {
             blockSelectionRenderer.color = farBlockSelectionColor;
         }
         else
         {
             blockSelectionRenderer.color = normalBlockSelectionColor;
-            buildingManager.TryInteractBuilding(building);
+            BuildingManager.i.TryInteractBuilding(building);
         }
 
         if (!building.GetComponent<BuildingRuntime>().isPlaced)
@@ -170,14 +167,21 @@ public class InfoBoxManager : MonoBehaviour
 
     public void SetFromItem(Item item,int amount = 0)
     {
+        if (StateManager.i.paused) return;
         infoBox.gameObject.SetActive(true);
         infoBox.Set(item,amount);
         wasActive=true;
     }
 
-    public void SetFromCraftingInfo(Item item,string message)
+    public void SetFromCraftingInfo(Item item, CraftStatus status, string message)
     {
+        if (StateManager.i.paused) return;
         infoBoxCrafting.SetActive(true);
-        infoBox.SetCrafting(item,message);
+        infoBox.SetCrafting(item, status, message);
+    }
+
+    private void Awake()
+    {
+        i = this;
     }
 }

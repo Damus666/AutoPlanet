@@ -4,14 +4,13 @@ using UnityEngine;
 
 public class SaveApplyLoadData : MonoBehaviour
 {
-    [SerializeField] SaveManager saveManager;
     [SerializeField] float waitTime = 3.1f;
     bool startedApplying;
 
     private void Update()
     {
         if (startedApplying) return;
-        if (!saveManager.isNewWorld)
+        if (!SaveManager.i.isNewWorld)
         {
             Invoke(nameof(FinalApply), waitTime);
             startedApplying = true;
@@ -21,7 +20,7 @@ public class SaveApplyLoadData : MonoBehaviour
 
     void FinalApply()
     {
-        saveManager.ApplyLoadData();
+        SaveManager.i.ApplyLoadData();
         enabled = false;
     }
 }

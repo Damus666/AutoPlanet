@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PetManager : MonoBehaviour
 {
-    [SerializeField] Constants constants;
     [SerializeField] GameObject petPrefab;
     Pet currentPet;
 
@@ -40,17 +39,17 @@ public class PetManager : MonoBehaviour
             case 3:
                 var newpet = Instantiate(petPrefab);
                 currentPet = newpet.AddComponent<LightPet>();
-                currentPet.Setup(constants, transform.parent, ID);
+                currentPet.Setup(transform.parent, ID);
                 break;
             case 4:
                 var newpet2 = Instantiate(petPrefab);
                 currentPet = newpet2.AddComponent<LaserPet>();
-                currentPet.Setup(constants, transform.parent, ID);
+                currentPet.Setup(transform.parent, ID);
                 break;
             case 5:
                 var newpet3 = Instantiate(petPrefab);
                 currentPet = newpet3.AddComponent<CollectorPet>();
-                currentPet.Setup(constants, transform.parent, ID);
+                currentPet.Setup(transform.parent, ID);
                 break;
         }
     }

@@ -8,7 +8,6 @@ public class EnemyExpedition : MonoBehaviour
     [SerializeField] float distanceForExpedition;
     [SerializeField] float maxExpeditionTime;
 
-    Constants constants;
     EnemySpawner spawner;
     Transform pT;
 
@@ -19,23 +18,22 @@ public class EnemyExpedition : MonoBehaviour
     {
         spawner = s;
         pT = p;
-        constants = GameObject.Find("GameManager").GetComponent<Constants>();
     }
 
     private void Update()
     {
-        if (!constants.enemyExpeditionActive)
+        if (!Constants.i.enemyExpeditionActive)
         {
-            if (Time.time-lastExpedition > expeditionCooldown && Time.time-constants.lastExpedition > expeditionCooldown)
+            if (Time.time-lastExpedition > expeditionCooldown && Time.time- Constants.i.lastExpedition > expeditionCooldown)
             {
                 float dist = Vector3.Distance(transform.position, pT.transform.position);
                 if (dist <= distanceForExpedition)
                 {
                     spawner.SendExpedition();
-                    constants.enemyExpeditionActive = true;
+                    Constants.i.enemyExpeditionActive = true;
                     lastExpedition = Time.time;
                     isExpedition = true;
-                    constants.lastExpedition = Time.time;
+                    Constants.i.lastExpedition = Time.time;
                 }
             }
         } 
@@ -43,7 +41,7 @@ public class EnemyExpedition : MonoBehaviour
         {
             if (Time.time-lastExpedition > maxExpeditionTime)
             {
-                constants.enemyExpeditionActive = false;
+                Constants.i.enemyExpeditionActive = false;
             }
         }
     }

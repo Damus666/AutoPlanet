@@ -52,6 +52,7 @@ public class EnemySpawner : MonoBehaviour
     {
         health -= amount;
         lastDamage = Time.time;
+        SoundManager.i.hitSound.Play();
         RefreshDescription();
         foreach (Enemy enemy in children)
         {

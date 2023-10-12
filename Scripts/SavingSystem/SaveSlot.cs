@@ -10,9 +10,9 @@ public class SaveSlot
 
     public bool isEmpty { get { return amount <= 0 || itemID == -1; } }
 
-    public InternalSlot ToSlot(SaveManager manager)
+    public InternalSlot ToSlot()
     {
-        return new InternalSlot(manager.GetItemFromID(itemID), amount);
+        return new InternalSlot(SaveManager.i.GetItemFromID(itemID), amount);
     }
 
     public SaveSlot(Item item, int amount)

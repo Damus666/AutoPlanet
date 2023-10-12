@@ -4,18 +4,13 @@ using UnityEngine;
 
 public class Tools : MonoBehaviour
 {
-    [SerializeField] StateManager stateManager;
-    [SerializeField] Inventory inventory;
-
+    public static Tools i;
     [SerializeField] float minDistance = 1f;
     [SerializeField] float minXDistance;
-    [SerializeField] float rightCorrectionAngle = 45;
-    [SerializeField] float leftCorrectionAngle = 135;
     [SerializeField] float runningOffset = 0.5f;
 
     [SerializeField] AudioSource clickSound;
     [SerializeField] CharacterController2D cc;
-    [SerializeField] Player player;
 
     [SerializeField] Transform mainPivot;
     [SerializeField] Transform center;
@@ -43,12 +38,13 @@ public class Tools : MonoBehaviour
 
     bool cannotEquipWeapon { get { 
             return 
-                (toolIndex == 4 && inventory.CountItem(laserSwordItem) <= 0) || 
-                (toolIndex == 5 && inventory.CountItem(laserRayItem) <= 0); 
+                (toolIndex == 4 && Inventory.i.CountItem(laserSwordItem) <= 0) || 
+                (toolIndex == 5 && Inventory.i.CountItem(laserRayItem) <= 0); 
         } }
 
-    void Start()
+    void Awake()
     {
+        i = this;
         mainCamera = Camera.main;
         currentTool = tools[0];
         currentPivot = pivots[0];
@@ -64,9 +60,9 @@ public class Tools : MonoBehaviour
             clickSound.Play();
             if (isSelecting)
             {
-                if (stateManager.inventoryOpen)
+                if (StateManager.i.inventoryOpen)
                 {
-                    inventory.Close();
+                    Inventory.i.Close();
                 }
             }
         } else if (Input.GetKeyDown(KeyCode.Escape))
@@ -108,9 +104,9 @@ public class Tools : MonoBehaviour
         {
             SelectTool(-1);
         }
-        if (currentTool != null)
+        if (currentTool != null && !StateManager.i.paused)
         {
-            if (player.isRunning)
+            if (Player.i.isRunning)
             {
                 transform.localPosition = new Vector3(-runningOffset, 0, 0);
             } else

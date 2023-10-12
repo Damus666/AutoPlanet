@@ -101,9 +101,9 @@ public class Pet : MonoBehaviour
         }
     }
 
-    public void Setup(Constants constants,Transform player,int ID)
+    public void Setup(Transform player,int ID)
     {
-        this.constants = constants;
+        constants = Constants.i;
         playerT = player;
         specialID = ID;
         negOffset = new Vector3(-constants.petPosOffset.x, constants.petPosOffset.y, 0);

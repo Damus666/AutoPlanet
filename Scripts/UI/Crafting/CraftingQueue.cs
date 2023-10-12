@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CraftingQueue : MonoBehaviour
 {
-    [SerializeField] Inventory inventory;
     [SerializeField] GameObject queueSlotPrefab;
     [SerializeField] Transform slotsParent;
 
@@ -92,7 +91,7 @@ public class CraftingQueue : MonoBehaviour
         }
         foreach (Requirement req in item.requirements)
         {
-            inventory.AddItem(req.item, req.amount);
+            Inventory.i.AddItem(req.item, req.amount);
         }
     }
 
@@ -118,7 +117,9 @@ public class CraftingQueue : MonoBehaviour
         ResetUIProgress();
         if (!crafting) return;
         crafting = false;
-        inventory.AddItem(craftResult, craftResult.craftAmount);
+        int remaining = Inventory.i.AddItem(craftResult, craftResult.craftAmount);
+        if (remaining > 0)
+            Inventory.i.DropMultiple(craftResult, remaining, Inventory.i.transform.position);
         RemoveFromQueue(craftResult);
     }
 

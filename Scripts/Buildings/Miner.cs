@@ -20,21 +20,21 @@ public class Miner : Building
         return data;
     }
 
-    public override void LoadData(SaveBuilding data, SaveManager manager)
+    public override void LoadData(SaveBuilding data)
     {
         BaseLoadData(data);
         if (currentOre && data.intVar != -1)
             currentOre.amount = data.intVar;
-        storage = data.storages[0].ToSlot(manager);
+        storage = data.storages[0].ToSlot();
     }
 
-    public override void BuildingDestroyed(Inventory inventory)
+    public override void BuildingDestroyed()
     {
         if (mInt.isOpen && mInt.currentMiner == this)
         {
-            inventory.Close();
+            Inventory.i.Close();
         }
-        inventory.DropMultiple(storage, transform.position);
+        Inventory.i.DropMultiple(storage, transform.position);
     }
 
     public override void FinishInit()
@@ -97,10 +97,12 @@ public class Miner : Building
         {
             if (mInt.isOpen && mInt.currentMiner == this)
             {
-                mInt.inventory.Close();
+                Inventory.i.Close();
             }
-            GameObject.Find("Player").GetComponent<Player>().toolInteract.DisableTile(currentOre.gameObject);
-            mInt.inventory.SpawnDrop(referenceItem, transform.position);
+            ToolInteract.i.DisableTile(currentOre.gameObject, true);
+            ToolInteract.i.RegisterMinedTile(currentOre.gameObject);
+
+            Inventory.i.SpawnDrop(referenceItem, transform.position);
             Destroy(gameObject);
         } else
         {
